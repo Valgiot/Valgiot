@@ -12,9 +12,34 @@ interface Props {
 }
 
 const { titre, description = SITE.description, image, transparent = false } = Astro.props;
-const titreComplet = titre ? `${titre} — ${SITE.nom}` : `${SITE.nom} — ${SITE.accroche}`;
+const titreComplet = titre ? `${titre} — ${SITE.nom}` : `${SITE.accroche}, ${SITE.region} — ${SITE.nom}`;
 const canonique = new URL(Astro.url.pathname, Astro.site);
 const annee = new Date().getFullYear();
+
+// Fiche d'identité lue par Google (activité, zone, contact, Instagram), sur la page d'accueil.
+const accueil = Astro.url.pathname === '/';
+const donneesStructurees = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: SITE.nom,
+  description: SITE.description,
+  url: Astro.site?.href,
+  email: SITE.email,
+  image: image ? new URL(image, Astro.site).href : undefined,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: SITE.ville,
+    addressRegion: SITE.region,
+    addressCountry: 'FR',
+  },
+  areaServed: [
+    { '@type': 'City', name: SITE.ville },
+    { '@type': 'AdministrativeArea', name: SITE.region },
+    { '@type': 'Country', name: 'France' },
+  ],
+  knowsAbout: SITE.domaines,
+  sameAs: [SITE.instagram.url],
+};
 ---
 
 <!doctype html>
@@ -29,11 +54,21 @@ const annee = new Date().getFullYear();
     <meta name="theme-color" content="#0b3c5d" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content={SITE.nom} />
     <meta property="og:title" content={titreComplet} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonique} />
     {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
     <meta name="twitter:card" content="summary_large_image" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    {
+      accueil && (
+        <script
+          type="application/ld+json"
+          set:html={JSON.stringify(donneesStructurees).replace(/</g, '\\u003c')}
+        />
+      )
+    }
   </head>
   <body>
     <header class:list={["entete", { "entete--transparent": transparent }]}>
@@ -50,7 +85,7 @@ const annee = new Date().getFullYear();
 
     <footer class="pied">
       <div class="conteneur pied__barre">
-        <p>© {annee} {SITE.nom} — Photographe à {SITE.ville}</p>
+        <p>© {annee} {SITE.nom} — {SITE.accroche}, {SITE.region}</p>
         <p class="pied__liens">
           <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
           <a href={SITE.instagram.url} rel="me noopener" target="_blank">Instagram</a>

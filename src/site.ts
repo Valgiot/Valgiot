@@ -1,16 +1,24 @@
 // Informations générales du site : modifie-les ici, elles sont reprises partout.
 export const SITE = {
   nom: 'V.A.L.G',
-  accroche: 'Photographe à Caen',
+  // Métier + lieu : c'est ce que les gens tapent dans Google. Repris dans le titre des pages.
+  accroche: 'Photographe & vidéaste à Caen',
+  region: 'Normandie',
   // Grand titre sur le diaporama de l'accueil
   slogan: "L'instant, sur le terrain",
-  sloganSousTitre: 'Photographe à Caen — sport, entreprises, portrait, événements',
+  sloganSousTitre: 'Photographe & vidéaste à Caen, Normandie',
   boutonAccueil: 'Découvrir mon univers',
   // Délai entre deux photos du diaporama (en secondes)
   diaporamaSecondes: 8,
   sousTitre: 'Sport, entreprises, portrait, événements — en Normandie et partout en France sur demande.',
+  // Texte affiché sous le titre dans les résultats Google (150 à 160 caractères idéalement).
   description:
-    'V.A.L.G, photographe à Caen : sport, entreprises et restaurants, portrait, événements. Déplacements en Normandie et partout en France sur demande.',
+    'V.A.L.G, photographe et vidéaste à Caen en Normandie : sport, entreprises, restaurants et food, portrait, événements. Déplacements partout en France.',
+  // Court texte de présentation sur l'accueil (utile pour Google : il décrit ton activité avec tes mots).
+  presentation:
+    "Photographe et vidéaste basé à Caen, j'accompagne clubs, sportifs, restaurants, entreprises et particuliers partout en Normandie : reportages sportifs, photo culinaire, portraits et couverture d'événements.",
+  // Domaines cités à Google dans les données structurées.
+  domaines: ['Photographie de sport', 'Vidéo', 'Photographie culinaire', 'Photographie de restaurant', "Photographie d'entreprise", 'Portrait', 'Photographie événementielle'],
   email: 'valentingiot@hotmail.com',
   instagram: {
     pseudo: 'valg_studio__',

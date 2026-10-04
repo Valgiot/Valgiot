@@ -1,5 +1,5 @@
 // Lit automatiquement le dossier src/photos :
-//   src/photos/<categorie>/categorie.json        → titre, description, ordre, couverture
+//   src/photos/<categorie>/categorie.json        → titre, description, ordre, couverture, titreSeo, descriptionSeo
 //   src/photos/<categorie>/*.jpg                 → "Sélection" (meilleures photos), affichée en premier
 //   src/photos/<categorie>/<evenement>/*.jpg     → photos d'un événement
 //   src/photos/<categorie>/<evenement>/infos.json → titre, date, lieu, description, videos
@@ -11,6 +11,8 @@ type CategorieInfos = {
   ordre?: number;
   couverture?: string;
   visible?: boolean;
+  titreSeo?: string;
+  descriptionSeo?: string;
 };
 
 type EvenementInfos = {
@@ -39,6 +41,8 @@ export type Categorie = {
   slug: string;
   titre: string;
   description?: string;
+  titreSeo?: string;
+  descriptionSeo?: string;
   ordre: number;
   couverture?: ImageMetadata;
   selection: Photo[];
@@ -107,6 +111,8 @@ function construire(): Categorie[] {
       if (infos.visible === false) cachees.add(cat.slug);
       cat.titre = infos.titre ?? cat.titre;
       cat.description = infos.description;
+      cat.titreSeo = infos.titreSeo;
+      cat.descriptionSeo = infos.descriptionSeo;
       cat.ordre = infos.ordre ?? cat.ordre;
       if (infos.couverture) {
         const img = images[`${ROOT}${parts[0]}/${infos.couverture}`];

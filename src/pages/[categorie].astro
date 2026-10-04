@@ -29,13 +29,15 @@ for (const g of groupes) grands.set(g.id, await Promise.all(g.photos.map(grandFo
 const format = (p: Photo) => `--ratio: ${(p.image.width / p.image.height).toFixed(3)}`;
 
 const couverture = categorie.couverture ? (await getImage({ src: categorie.couverture, width: 1200 })).src : undefined;
-const description = `${categorie.titre} — ${categorie.description ?? ''} Photographe à ${SITE.ville}.`.trim();
+const titreSeo = categorie.titreSeo ?? `Photographe ${categorie.titre.toLowerCase()} à ${SITE.ville}`;
+const description =
+  categorie.descriptionSeo ?? `${categorie.description ?? categorie.titre} ${SITE.accroche}, ${SITE.region}.`;
 ---
 
-<Base titre={`Photographe ${categorie.titre.toLowerCase()} à ${SITE.ville}`} description={description} image={couverture}>
+<Base titre={titreSeo} description={description} image={couverture}>
   <section class="entete-cat conteneur">
     <a class="retour" href="/#portfolio">← Toutes les catégories</a>
-    <h1>{categorie.titre}</h1>
+    <h1><span class="h1__seo surtitre">{titreSeo}</span>{categorie.titre}</h1>
     {categorie.description && <p>{categorie.description}</p>}
     {
       categorie.evenements.length > 1 && (
@@ -183,6 +185,11 @@ const description = `${categorie.titre} — ${categorie.description ?? ''} Photo
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+  }
+  .h1__seo {
+    display: block;
+    margin-bottom: 10px;
+    text-transform: uppercase;
   }
   .entete-cat > p {
     max-width: 60ch;

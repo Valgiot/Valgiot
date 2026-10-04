@@ -1,5 +1,8 @@
 {
   "titre": "Portrait",
-  "description": "Portraits en studio ou en extérieur, pour les particuliers, les artistes et les professionnels.",
-  "ordre": 3
+  "description": "Portraits en studio ou en extérieur, pour les particuliers, les artistes et les professionnels, à Caen et en Normandie.",
+  "ordre": 3,
+  "couverture": "01-portrait-plage.jpg",
+  "titreSeo": "Photographe portrait à Caen et en Normandie",
+  "descriptionSeo": "Séances photo portrait à Caen et en Normandie : portraits lifestyle, en extérieur ou en studio, pour particuliers, artistes et professionnels."
 }

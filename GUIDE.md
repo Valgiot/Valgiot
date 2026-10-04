@@ -112,6 +112,36 @@ Sur github.com, ouvre le dossier voulu dans `src/photos/`, puis "Add file" → "
 Pour créer un nouveau dossier, utilise "Add file" → "Create new file" et tape `nom-du-dossier/infos.json`.
 Une fois le site relié à Netlify (voir plus bas), il se met à jour tout seul.
 
+## Référencement Google (SEO)
+
+Déjà en place sur le site :
+
+- Titre de l'onglet et des résultats Google : « Photographe & vidéaste à Caen, Normandie — V.A.L.G » sur l'accueil,
+  et un titre par univers (« Photographe sport à Caen et en Normandie », « Photographe entreprise, restaurant et food
+  à Caen », etc.).
+- Description Google de chaque page, grand titre (h1) avec métier + ville, court texte de présentation sur l'accueil.
+- Fiche d'identité pour Google (activité, Caen, Normandie, e-mail, Instagram) et plan du site (`/sitemap.xml`).
+- Texte descriptif des photos tiré du nom des fichiers.
+
+Où modifier :
+
+- Titre et description de l'accueil, texte de présentation : `src/site.ts` (`accroche`, `description`, `presentation`).
+- Titre et description Google d'un univers : `titreSeo` et `descriptionSeo` dans son `categorie.json`.
+
+Les « mots-clés » cachés ne servent plus à rien pour Google : ce qui compte, ce sont les mots **visibles** dans
+les titres et les textes (photographe, vidéaste, Caen, Normandie, sport, restaurant, food, portrait, événementiel…).
+Reste naturel : une phrase écrite pour un humain vaut mieux qu'une liste de mots.
+
+À faire une fois le site en ligne (c'est ce qui compte le plus pour « photographe Caen ») :
+
+1. **Google Business Profile** (gratuit) : crée ta fiche « V.A.L.G — Photographe & vidéaste », catégorie
+   « Photographe », zone desservie Caen / Normandie, avec le lien du site et des photos. Demande des avis à tes clients.
+2. **Google Search Console** : ajoute ton site et déclare le plan du site `https://ton-domaine.fr/sitemap.xml`.
+3. Mets le lien du site dans ta bio Instagram, et demande aux clubs, restaurants et clients de te créditer avec un
+   lien vers ton site quand ils publient tes photos.
+4. Ajoute régulièrement des événements avec un titre et un lieu précis (ex. « SM Caen — Stade d'Ornano ») :
+   chaque nouveau contenu aide le référencement.
+
 ## Voir le site sur ton ordinateur
 
 Il faut [Node.js](https://nodejs.org) (version 22 ou plus), puis dans un terminal, dans le dossier du site :

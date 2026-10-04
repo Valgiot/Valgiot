@@ -1,6 +1,6 @@
 ---
 import type { ImageMetadata } from 'astro';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { categories } from '../lib/photos';
 import { SITE } from '../site';
@@ -14,6 +14,9 @@ const diapos = Object.entries(
 )
   .sort(([a], [b]) => a.localeCompare(b, 'fr', { numeric: true }))
   .map(([, image]) => image);
+
+// Image affichée quand le lien du site est partagé (WhatsApp, réseaux…) : la première photo du diaporama.
+const partage = diapos[0] ? (await getImage({ src: diapos[0], width: 1200, format: 'jpg' })).src : undefined;
 
 // Logos clients : toutes les images du dossier src/clients. Le nom du fichier sert de nom du client.
 const clients = Object.entries(
@@ -33,7 +36,7 @@ const clients = Object.entries(
   }));
 ---
 
-<Base transparent>
+<Base transparent image={partage}>
   <section class="hero" aria-label="Présentation">
     <div class="hero__diapos" data-secondes={SITE.diaporamaSecondes}>
       {
@@ -51,8 +54,8 @@ const clients = Object.entries(
       }
     </div>
     <div class="hero__texte">
-      <h1>{SITE.slogan}</h1>
-      <p>{SITE.sloganSousTitre}</p>
+      <p class="hero__slogan">{SITE.slogan}</p>
+      <h1>{SITE.sloganSousTitre}</h1>
       <a class="bouton" href="#explorer">{SITE.boutonAccueil}</a>
     </div>
     {
@@ -72,6 +75,7 @@ const clients = Object.entries(
         <h2 id="titre-explorer">Explorez</h2>
         <p>Par univers</p>
       </header>
+      <p class="presentation">{SITE.presentation}</p>
       <ul class="grille" style={`--nb: ${categories.length}`}>
         {
           categories.map((c) => (
@@ -212,14 +216,17 @@ const clients = Object.entries(
     text-align: center;
     text-shadow: 0 2px 24px rgb(0 0 0 / 0.4);
   }
-  .hero h1 {
+  .hero__slogan {
+    margin: 0;
+    line-height: 1.15;
     font-size: clamp(2.4rem, 7vw, 5.2rem);
     font-weight: 400;
     letter-spacing: -0.02em;
   }
-  .hero p {
+  .hero h1 {
     margin: 0;
     font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+    font-weight: 500;
     letter-spacing: 0.12em;
   }
   .hero__points {
@@ -274,6 +281,11 @@ const clients = Object.entries(
   .section {
     padding-block: clamp(64px, 10vw, 128px);
   }
+  /* Laisse la place du menu quand on arrive par les liens "Portfolio" / "Contact". */
+  #explorer,
+  #contact {
+    scroll-margin-top: 24px;
+  }
   .section__entete {
     text-align: center;
     margin-bottom: clamp(32px, 5vw, 56px);
@@ -286,6 +298,13 @@ const clients = Object.entries(
     margin: 10px 0 0;
     color: var(--texte-doux);
     font-size: clamp(1rem, 1.8vw, 1.25rem);
+  }
+
+  .presentation {
+    max-width: 62ch;
+    margin: calc(clamp(32px, 5vw, 56px) * -0.5) auto clamp(32px, 5vw, 56px);
+    text-align: center;
+    color: var(--texte-doux);
   }
 
   /* --- Explorez : rectangles verticaux --- */
