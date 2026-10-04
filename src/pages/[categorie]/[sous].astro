@@ -1,0 +1,121 @@
+---
+// Page d'une sous-partie (ex. Sport → Football) : vidéos puis galerie photo.
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import EntetePage from '../../components/EntetePage.astro';
+import Galerie from '../../components/Galerie.astro';
+import Suite from '../../components/Suite.astro';
+import Visionneuse from '../../components/Visionneuse.astro';
+import { categories, formatDate, lienVideo, type Categorie, type SousCategorie } from '../../lib/photos';
+import { SITE } from '../../site';
+
+export function getStaticPaths() {
+  return categories.flatMap((categorie) =>
+    categorie.sousCategories.map((sous) => ({
+      params: { categorie: categorie.slug, sous: sous.slug },
+      props: { categorie, sous },
+    })),
+  );
+}
+
+interface Props {
+  categorie: Categorie;
+  sous: SousCategorie;
+}
+
+const { categorie, sous } = Astro.props;
+const voisines = categorie.sousCategories;
+const suivante = voisines.length > 1 ? voisines[(voisines.indexOf(sous) + 1) % voisines.length] : undefined;
+const vide = !sous.photos.length && !sous.videos.length;
+
+const titreCategorie = categorie.titreSeo ?? `Photographe ${categorie.titre.toLowerCase()} à ${SITE.ville}`;
+const titreSeo = sous.titreSeo ?? `${sous.titre} — ${titreCategorie}`;
+const description =
+  sous.descriptionSeo ??
+  sous.description ??
+  `${sous.titre}${sous.lieu ? ` (${sous.lieu})` : ''} : photos et vidéos par ${SITE.nom}, ${SITE.accroche.toLowerCase()}, ${SITE.region}.`;
+const couverture = sous.couverture ? (await getImage({ src: sous.couverture, width: 1200, format: 'jpg' })).src : undefined;
+const meta = [sous.date && formatDate(sous.date), sous.lieu].filter(Boolean).join(' · ');
+---
+
+<Base titre={titreSeo} description={description} image={couverture} noindex={vide}>
+  <EntetePage
+    retour={{ href: `/${categorie.slug}/`, label: categorie.titre }}
+    surtitre={`${categorie.titre} — ${SITE.accroche}`}
+    titre={sous.titre}
+    meta={meta}
+    description={sous.description}
+  />
+
+  <section class="conteneur contenu" aria-label={`Photos — ${sous.titre}`}>
+    {
+      sous.videos.length > 0 && (
+        <div class="videos">
+          {sous.videos.map((v, i) => (
+            <div class="video">
+              <iframe
+                src={lienVideo(v)}
+                title={`${sous.titre} — vidéo ${i + 1}`}
+                loading="lazy"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen
+              />
+            </div>
+          ))}
+        </div>
+      )
+    }
+    {sous.photos.length > 0 && <Galerie photos={sous.photos} groupe={sous.slug} contexte={sous.titre} />}
+    {
+      vide && (
+        <p class="a-venir">
+          Les photos arrivent bientôt. En attendant, retrouvez mon travail sur{' '}
+          <a href={SITE.instagram.url} target="_blank" rel="noopener">Instagram</a>.
+        </p>
+      )
+    }
+  </section>
+
+  <Suite
+    liens={[
+      suivante
+        ? { href: `/${categorie.slug}/${suivante.slug}/`, surtitre: categorie.titre, titre: suivante.titre }
+        : { href: `/${categorie.slug}/`, surtitre: 'Retour', titre: categorie.titre },
+      { href: '/#contact', surtitre: 'Un projet ?', titre: 'Me contacter' },
+    ]}
+  />
+  <Visionneuse />
+</Base>
+
+<style>
+  .contenu {
+    padding-block: clamp(8px, 2vw, 24px);
+  }
+  .videos {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  @media (min-width: 900px) {
+    .videos:has(.video + .video) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .video {
+    aspect-ratio: 16 / 9;
+    background: var(--surface);
+    border-radius: var(--rayon);
+    overflow: hidden;
+  }
+  .video iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .a-venir {
+    color: var(--texte-doux);
+  }
+  .a-venir a {
+    color: var(--lien);
+  }
+</style>

@@ -1,0 +1,134 @@
+---
+// Affichage plein écran des photos d'une Galerie (flèches, clavier, glisser du doigt). Une seule fois par page.
+---
+
+<dialog class="visionneuse" aria-label="Photo en plein écran">
+  <img alt="" />
+  <button class="visionneuse__fermer" type="button" aria-label="Fermer">✕</button>
+  <button class="visionneuse__prec" type="button" aria-label="Photo précédente">‹</button>
+  <button class="visionneuse__suiv" type="button" aria-label="Photo suivante">›</button>
+  <p class="visionneuse__compteur" aria-live="polite"></p>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('.visionneuse')!;
+  const img = dialog.querySelector('img')!;
+  const compteur = dialog.querySelector('.visionneuse__compteur')!;
+  let liens: HTMLAnchorElement[] = [];
+  let position = 0;
+
+  const afficher = (i: number) => {
+    position = (i + liens.length) % liens.length;
+    const lien = liens[position];
+    img.src = lien.href;
+    img.alt = lien.querySelector('img')?.alt ?? '';
+    compteur.textContent = `${position + 1} / ${liens.length}`;
+    // Précharge la suivante pour une navigation fluide.
+    new Image().src = liens[(position + 1) % liens.length].href;
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('a[data-groupe]').forEach((lien) => {
+    lien.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      liens = [...document.querySelectorAll<HTMLAnchorElement>(`a[data-groupe="${lien.dataset.groupe}"]`)];
+      afficher(liens.indexOf(lien));
+      dialog.showModal();
+    });
+  });
+
+  dialog.querySelector('.visionneuse__fermer')!.addEventListener('click', () => dialog.close());
+  dialog.querySelector('.visionneuse__prec')!.addEventListener('click', () => afficher(position - 1));
+  dialog.querySelector('.visionneuse__suiv')!.addEventListener('click', () => afficher(position + 1));
+  dialog.addEventListener('click', (ev) => {
+    if (ev.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('keydown', (ev) => {
+    if (ev.key === 'ArrowLeft') afficher(position - 1);
+    if (ev.key === 'ArrowRight') afficher(position + 1);
+  });
+
+  let departX = 0;
+  dialog.addEventListener('touchstart', (ev) => (departX = ev.touches[0].clientX), { passive: true });
+  dialog.addEventListener('touchend', (ev) => {
+    const dx = ev.changedTouches[0].clientX - departX;
+    if (Math.abs(dx) > 50) afficher(position + (dx < 0 ? 1 : -1));
+  });
+</script>
+
+<style>
+  .visionneuse {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(8 12 16 / 0.96);
+    color: #fff;
+  }
+  .visionneuse[open] {
+    display: grid;
+    place-items: center;
+  }
+  .visionneuse::backdrop {
+    background: transparent;
+  }
+  .visionneuse img {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - 96px);
+    width: auto;
+    object-fit: contain;
+  }
+  .visionneuse button {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.08);
+    color: #fff;
+    font: inherit;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .visionneuse button:hover {
+    background: rgb(255 255 255 / 0.18);
+  }
+  .visionneuse__fermer {
+    top: 16px;
+    right: 16px;
+    font-size: 1.1rem !important;
+  }
+  .visionneuse__prec,
+  .visionneuse__suiv {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .visionneuse__prec {
+    left: 16px;
+  }
+  .visionneuse__suiv {
+    right: 16px;
+  }
+  .visionneuse__compteur {
+    position: absolute;
+    bottom: 16px;
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+  }
+  @media (max-width: 600px) {
+    .visionneuse__prec,
+    .visionneuse__suiv {
+      top: auto;
+      bottom: 8px;
+      transform: none;
+    }
+  }
+</style>

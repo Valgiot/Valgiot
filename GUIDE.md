@@ -3,17 +3,29 @@
 Tout le contenu du site se trouve dans le dossier **`src/photos/`**. Tu n'as jamais besoin de toucher au code :
 le site lit ce dossier et construit les pages tout seul.
 
+Le site a trois niveaux :
+
+1. **Accueil** : un rectangle vertical par **univers** (Sport, Entreprises, Portrait, Événements, Marques).
+2. **Page d'un univers** : un carré par **sous-partie** (Football, Ski, Padel…), et/ou directement des photos.
+3. **Page d'une sous-partie** : la galerie photo (et les vidéos).
+
 ```
 src/photos/
-├── sport/                         ← une catégorie = un dossier (un rectangle sur l'accueil)
-│   ├── categorie.json             ← titre, texte, ordre, photo du rectangle
-│   ├── 01.jpg, 02.jpg…            ← "Sélection" : tes meilleures photos, affichées en premier
-│   └── match-sm-caen/             ← un événement = un sous-dossier
-│       ├── infos.json             ← titre, date, lieu, texte, vidéos (facultatif)
-│       └── 01.jpg, 02.jpg…        ← les photos de l'événement
+├── sport/                        ← un univers = un dossier (un rectangle sur l'accueil)
+│   ├── categorie.json            ← titre, texte, ordre, photo du rectangle
+│   ├── football/                 ← une sous-partie = un sous-dossier (un carré sur la page Sport)
+│   │   ├── infos.json            ← titre, lieu, date, texte, ordre, vidéos
+│   │   └── 01-stade-sm-caen.jpg  ← les photos de la sous-partie
+│   ├── ski/
+│   └── …
+├── evenements/
+│   ├── 30-ans-mnk/
+│   └── …
 ├── entreprises/
-├── portrait/
-└── evenements/
+├── marques/
+│   └── craft/
+└── portrait/                     ← pas de sous-dossier : les photos s'affichent directement
+    └── 01-portrait-plage.jpg
 ```
 
 ## Les photos du diaporama de l'accueil
@@ -33,22 +45,34 @@ Supprime les fichiers `exemple-logo-…`. S'il n'y a aucun logo, la section disp
 
 Ne mets que des clients qui sont d'accord pour apparaître.
 
-## Ajouter un événement (le plus courant)
+## Ajouter des photos dans une sous-partie (le plus courant)
 
-1. Crée un dossier dans la bonne catégorie, en minuscules et sans espaces ni accents : `src/photos/sport/match-sm-caen-2026/`
-2. Mets-y tes photos (JPG, PNG ou WebP). Elles s'affichent dans l'ordre de leur nom : nomme-les `01.jpg`, `02.jpg`…
-3. Ajoute un fichier `infos.json` (facultatif mais conseillé) :
+Ouvre le dossier de la sous-partie (ex. `src/photos/sport/football/`) et dépose tes photos (JPG, PNG ou WebP).
+Elles s'affichent dans l'ordre de leur nom : nomme-les `01-…`, `02-…`. La première sert de photo du carré.
+
+Une sous-partie sans photo s'affiche quand même, avec un carré bleu et « Les photos arrivent bientôt » :
+Google ne la référence pas tant qu'elle est vide.
+
+## Créer une nouvelle sous-partie (un nouveau carré)
+
+1. Crée un dossier dans le bon univers, en minuscules, sans espaces ni accents : `src/photos/evenements/tournoi-de-noel/`
+2. Ajoute un fichier `infos.json` :
 
 ```json
 {
-  "titre": "SM Caen — Stade d'Ornano",
-  "date": "2026-10-12",
+  "titre": "Tournoi de Noël",
   "lieu": "Caen",
-  "description": "Une phrase sur le match, le client ou le contexte."
+  "date": "2026-12-14",
+  "description": "Une phrase sur l'événement, le client ou le contexte.",
+  "ordre": 5
 }
 ```
 
-Les événements sont classés du plus récent au plus ancien (selon la `date`). Pour forcer un ordre, ajoute `"ordre": 1`, `"ordre": 2`…
+3. Mets-y tes photos.
+
+Tout est facultatif sauf le dossier lui-même. Les carrés sont classés selon `ordre`, puis du plus récent au plus ancien
+(selon la `date`). Le `lieu` s'affiche en petit sous le nom du carré (ex. « Porticcio, Corse »).
+Pour choisir la photo du carré : `"couverture": "03-nom-de-la-photo.jpg"`. Pour cacher un carré : `"visible": false`.
 
 ## Ajouter une vidéo
 
@@ -56,48 +80,47 @@ Mets ta vidéo sur **YouTube** ou **Vimeo** (jamais directement dans le dossier)
 
 ```json
 {
-  "titre": "Course de la Paix",
+  "titre": "Padel X Live",
   "videos": ["https://vimeo.com/123456789", "https://youtu.be/abcdefghijk"]
 }
 ```
 
-Un événement peut contenir des photos et des vidéos, ou seulement des vidéos.
+Les vidéos s'affichent au-dessus des photos. Une sous-partie peut ne contenir que des vidéos.
 
-## Mettre à jour ses meilleures photos
+## Univers sans sous-partie (ex. Portrait)
 
-Dépose les photos directement dans le dossier de la catégorie, par exemple `src/photos/sport/01.jpg`.
-Elles apparaissent tout en haut de la page de la catégorie.
+Dépose les photos directement dans le dossier de l'univers (ex. `src/photos/portrait/`) : elles s'affichent en galerie
+sur sa page. Si un univers a des sous-parties **et** des photos directes, les photos s'affichent sous les carrés,
+dans une partie « Sélection ».
 
 ## Changer la photo d'un rectangle de l'accueil
 
-Dans `categorie.json`, indique le chemin de la photo à partir du dossier de la catégorie :
+Dans `categorie.json`, indique le chemin de la photo à partir du dossier de l'univers :
 
 ```json
 {
   "titre": "Sport",
-  "description": "Matchs, courses, athlètes…",
   "ordre": 1,
-  "couverture": "match-sm-caen-2026/04.jpg"
+  "couverture": "ski/01-ski-freestyle.jpg"
 }
 ```
 
 Sans `couverture`, le site prend la première photo trouvée. Une photo **verticale** (format portrait) rend le mieux,
-avec le sujet au centre ou en haut : le nom de la catégorie s'affiche en bas du rectangle.
+avec le sujet au centre ou en haut : le nom s'affiche en bas du rectangle.
 
 Astuce : donne des noms parlants à tes fichiers (`02-padel.jpg` plutôt que `IMG_4521.jpg`). Le nom sert de
 description de la photo pour Google et l'accessibilité.
 
-## Ajouter une catégorie (ex. Vidéo, Mariage, Immobilier…)
+## Ajouter un univers (ex. Vidéo, Mariage, Immobilier…)
 
-Crée un nouveau dossier dans `src/photos/` avec un `categorie.json` et des photos : un nouveau rectangle apparaît
-sur l'accueil, avec sa page. Le champ `ordre` règle sa position. Pour masquer une catégorie sans la supprimer :
-`"visible": false`.
+Crée un nouveau dossier dans `src/photos/` avec un `categorie.json` (titre, description, ordre, titreSeo,
+descriptionSeo) : un nouveau rectangle apparaît sur l'accueil, avec sa page. Le champ `ordre` règle sa position.
+Pour masquer un univers sans le supprimer : `"visible": false`.
 
 ## Préparer ses photos
 
 - Exporte en JPG, **2500 px maximum** sur le grand côté, qualité 80–85 % (le site recrée ensuite les tailles adaptées).
 - Le site supprime automatiquement les données EXIF/GPS des images affichées.
-- Supprime les dossiers `exemple-…` quand tu as mis tes vraies photos.
 
 ## Modifier les informations générales
 
@@ -109,7 +132,7 @@ n'apparaît pas sur le site : ajoute ton SIRET dès que tu l'as reçu.
 ## Ajouter des photos sans ordinateur de développement
 
 Sur github.com, ouvre le dossier voulu dans `src/photos/`, puis "Add file" → "Upload files" et glisse tes photos.
-Pour créer un nouveau dossier, utilise "Add file" → "Create new file" et tape `nom-du-dossier/infos.json`.
+Pour créer une sous-partie, utilise "Add file" → "Create new file" et tape `nom-du-dossier/infos.json`.
 Une fois le site relié à Netlify (voir plus bas), il se met à jour tout seul.
 
 ## Référencement Google (SEO)
@@ -139,7 +162,7 @@ Reste naturel : une phrase écrite pour un humain vaut mieux qu'une liste de mot
 2. **Google Search Console** : ajoute ton site et déclare le plan du site `https://ton-domaine.fr/sitemap.xml`.
 3. Mets le lien du site dans ta bio Instagram, et demande aux clubs, restaurants et clients de te créditer avec un
    lien vers ton site quand ils publient tes photos.
-4. Ajoute régulièrement des événements avec un titre et un lieu précis (ex. « SM Caen — Stade d'Ornano ») :
+4. Ajoute régulièrement des sous-parties avec un titre et un lieu précis (ex. « SM Caen — Stade d'Ornano ») :
    chaque nouveau contenu aide le référencement.
 
 ## Voir le site sur ton ordinateur

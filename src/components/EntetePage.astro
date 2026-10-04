@@ -1,0 +1,56 @@
+---
+// En-tête des pages d'univers et de sous-parties : lien retour, surtitre (mots-clés), grand titre, texte.
+interface Props {
+  retour: { href: string; label: string };
+  surtitre: string;
+  titre: string;
+  meta?: string;
+  description?: string;
+}
+
+const { retour, surtitre, titre, meta, description } = Astro.props;
+---
+
+<section class="entete-page conteneur">
+  <a class="retour" href={retour.href}>← {retour.label}</a>
+  <h1><span class="surtitre h1__surtitre">{surtitre}</span>{titre}</h1>
+  {meta && <p class="meta">{meta}</p>}
+  {description && <p class="texte">{description}</p>}
+</section>
+
+<style>
+  .entete-page {
+    padding-block: clamp(32px, 6vw, 72px) clamp(28px, 4vw, 48px);
+  }
+  .retour {
+    font-size: 0.85rem;
+    color: var(--texte-doux);
+    text-decoration: none;
+  }
+  .retour:hover {
+    color: var(--lien);
+  }
+  h1 {
+    margin-top: 20px;
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    overflow-wrap: anywhere;
+  }
+  .h1__surtitre {
+    display: block;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .meta {
+    margin: 10px 0 0;
+    font-size: 0.9rem;
+    color: var(--texte-doux);
+  }
+  .texte {
+    max-width: 60ch;
+    margin: 14px 0 0;
+    color: var(--texte-doux);
+  }
+</style>

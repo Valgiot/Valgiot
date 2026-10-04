@@ -1,0 +1,54 @@
+---
+// Liens de fin de page : "suivant" et "me contacter".
+interface Props {
+  liens: { href: string; surtitre: string; titre: string }[];
+}
+
+const { liens } = Astro.props;
+---
+
+<nav class="suite conteneur" aria-label="Suite">
+  {
+    liens.map((l) => (
+      <a class="suite__lien" href={l.href}>
+        <span class="surtitre">{l.surtitre}</span>
+        <span class="suite__titre">{l.titre} →</span>
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .suite {
+    display: grid;
+    gap: 12px;
+    padding-block: clamp(40px, 6vw, 72px);
+  }
+  @media (min-width: 700px) {
+    .suite {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+  .suite__lien {
+    display: grid;
+    gap: 6px;
+    padding: 28px;
+    background: var(--surface);
+    border-radius: var(--rayon);
+    text-decoration: none;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
+  }
+  .suite__lien:hover {
+    background: var(--ocean);
+    color: #fff;
+  }
+  .suite__lien:hover .surtitre {
+    color: rgb(255 255 255 / 0.7);
+  }
+  .suite__titre {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-weight: 500;
+  }
+</style>

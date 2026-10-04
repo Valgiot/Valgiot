@@ -1,0 +1,98 @@
+---
+// Page d'un univers (Sport, Entreprises…) : ses sous-parties en carrés, puis les photos posées directement dans son dossier.
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Carte from '../../components/Carte.astro';
+import EntetePage from '../../components/EntetePage.astro';
+import Galerie from '../../components/Galerie.astro';
+import Grille from '../../components/Grille.astro';
+import Suite from '../../components/Suite.astro';
+import Visionneuse from '../../components/Visionneuse.astro';
+import { categories, type Categorie } from '../../lib/photos';
+import { SITE } from '../../site';
+
+export function getStaticPaths() {
+  return categories.map((categorie) => ({ params: { categorie: categorie.slug }, props: { categorie } }));
+}
+
+interface Props {
+  categorie: Categorie;
+}
+
+const { categorie } = Astro.props;
+const index = categories.findIndex((c) => c.slug === categorie.slug);
+const suivante = categories[(index + 1) % categories.length];
+const { sousCategories, photos } = categorie;
+
+const couverture = categorie.couverture ? (await getImage({ src: categorie.couverture, width: 1200, format: 'jpg' })).src : undefined;
+const titreSeo = categorie.titreSeo ?? `Photographe ${categorie.titre.toLowerCase()} à ${SITE.ville}`;
+const description =
+  categorie.descriptionSeo ?? `${categorie.description ?? categorie.titre} ${SITE.accroche}, ${SITE.region}.`;
+---
+
+<Base titre={titreSeo} description={description} image={couverture} noindex={!sousCategories.length && !photos.length}>
+  <EntetePage
+    retour={{ href: '/#explorer', label: 'Tous les univers' }}
+    surtitre={titreSeo}
+    titre={categorie.titre}
+    description={categorie.description}
+  />
+
+  {
+    sousCategories.length > 0 && (
+      <section class="bloc conteneur">
+        <Grille nb={sousCategories.length} colonnesMax={4} largeurMax={280} label={categorie.titre}>
+          {sousCategories.map((s) => (
+            <li>
+              <Carte
+                href={`/${categorie.slug}/${s.slug}/`}
+                titre={s.titre}
+                sousTitre={s.lieu}
+                image={s.couverture}
+                format="carre"
+                sizes="(min-width: 1100px) 280px, (min-width: 700px) 33vw, 50vw"
+              />
+            </li>
+          ))}
+        </Grille>
+      </section>
+    )
+  }
+
+  {
+    photos.length > 0 && (
+      <section class="bloc conteneur" aria-label="Photos">
+        {sousCategories.length > 0 && <h2 class="bloc__titre">Sélection</h2>}
+        <Galerie photos={photos} groupe="photos" contexte={categorie.titre} />
+      </section>
+    )
+  }
+
+  {
+    !sousCategories.length && !photos.length && (
+      <p class="bloc conteneur a-venir">Les photos arrivent bientôt.</p>
+    )
+  }
+
+  <Suite
+    liens={[
+      { href: `/${suivante.slug}/`, surtitre: 'Univers suivant', titre: suivante.titre },
+      { href: '/#contact', surtitre: 'Un projet ?', titre: 'Me contacter' },
+    ]}
+  />
+  <Visionneuse />
+</Base>
+
+<style>
+  .bloc {
+    padding-block: clamp(16px, 3vw, 32px);
+  }
+  .bloc__titre {
+    margin-bottom: 20px;
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    font-weight: 500;
+  }
+  .a-venir {
+    color: var(--texte-doux);
+  }
+</style>

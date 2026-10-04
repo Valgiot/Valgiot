@@ -9,9 +9,11 @@ interface Props {
   image?: string;
   /** En-tête transparent posé sur une grande photo (page d'accueil). */
   transparent?: boolean;
+  /** Page encore vide : on demande à Google de ne pas la référencer. */
+  noindex?: boolean;
 }
 
-const { titre, description = SITE.description, image, transparent = false } = Astro.props;
+const { titre, description = SITE.description, image, transparent = false, noindex = false } = Astro.props;
 const titreComplet = titre ? `${titre} — ${SITE.nom}` : `${SITE.accroche}, ${SITE.region} — ${SITE.nom}`;
 const canonique = new URL(Astro.url.pathname, Astro.site);
 const annee = new Date().getFullYear();
@@ -50,6 +52,7 @@ const donneesStructurees = {
     <title>{titreComplet}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonique} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="theme-color" content="#0b3c5d" />
     <meta property="og:type" content="website" />

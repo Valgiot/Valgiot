@@ -1,0 +1,75 @@
+---
+// Galerie "justifiée" : chaque photo prend une largeur proportionnelle à son format.
+// Un clic ouvre la photo en plein écran (composant Visionneuse, à placer une fois dans la page).
+import { Image, getImage } from 'astro:assets';
+import type { Photo } from '../lib/photos';
+
+interface Props {
+  photos: Photo[];
+  /** Identifiant du groupe de photos parcouru dans la visionneuse. */
+  groupe: string;
+  /** Sert au texte descriptif des photos (ex. "Football"). */
+  contexte: string;
+}
+
+const { photos, groupe, contexte } = Astro.props;
+const grands = await Promise.all(photos.map(async (p) => (await getImage({ src: p.image, width: 2000 })).src));
+const format = (p: Photo) => `--ratio: ${(p.image.width / p.image.height).toFixed(3)}`;
+---
+
+<div class="galerie">
+  {
+    photos.map((p, i) => (
+      <a class="vignette" href={grands[i]} data-groupe={groupe} style={format(p)}>
+        <Image
+          src={p.image}
+          alt={p.alt ? `${p.alt} — ${contexte}` : `${contexte} — photo ${i + 1}`}
+          widths={[400, 700, 1000]}
+          sizes="(min-width: 700px) 50vw, 100vw"
+        />
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .galerie {
+    --hauteur: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  @media (min-width: 700px) {
+    .galerie {
+      --hauteur: 280px;
+    }
+  }
+  @media (min-width: 1100px) {
+    .galerie {
+      --hauteur: 340px;
+    }
+  }
+  /* Évite que la dernière ligne soit étirée à l'excès. */
+  .galerie::after {
+    content: '';
+    flex-grow: 999;
+  }
+  .vignette {
+    flex: var(--ratio) 1 calc(var(--ratio) * var(--hauteur));
+    display: block;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    background: var(--surface);
+    cursor: zoom-in;
+  }
+  .vignette :global(img) {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: var(--ratio);
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .vignette:hover :global(img) {
+    transform: scale(1.025);
+  }
+</style>
