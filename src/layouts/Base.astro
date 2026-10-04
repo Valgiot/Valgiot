@@ -37,13 +37,11 @@ const annee = new Date().getFullYear();
   </head>
   <body>
     <header class:list={["entete", { "entete--transparent": transparent }]}>
-      <div class="conteneur entete__barre">
+      <nav class="conteneur entete__barre" aria-label="Navigation principale">
+        <a class="entete__lien" href="/#explorer">Portfolio</a>
         <a class="logo" href="/" aria-label={`${SITE.nom} — accueil`}>{SITE.nom}</a>
-        <nav aria-label="Navigation principale">
-          <a href="/#explorer">Portfolio</a>
-          <a href="/#contact">Contact</a>
-        </nav>
-      </div>
+        <a class="entete__lien entete__lien--droite" href="/#contact">Contact</a>
+      </nav>
     </header>
 
     <main>
@@ -92,10 +90,10 @@ const annee = new Date().getFullYear();
     color: #fff;
     transition: background-color 0.3s, color 0.3s;
   }
-  .entete--transparent nav a {
+  .entete--transparent .entete__lien {
     color: rgb(255 255 255 / 0.85);
   }
-  .entete--transparent nav a:hover {
+  .entete--transparent .entete__lien:hover {
     color: #fff;
   }
   .entete--transparent.entete--plein {
@@ -103,32 +101,40 @@ const annee = new Date().getFullYear();
     color: #fff;
   }
   .entete__barre {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    height: 64px;
+    height: 76px;
   }
   .logo {
-    font-weight: 700;
-    font-size: 1.15rem;
+    font-size: clamp(1.45rem, 4.5vw, 2rem);
+    font-weight: 800;
     letter-spacing: 0.22em;
+    /* compense l'espace ajouté après la dernière lettre pour un centrage parfait */
+    margin-right: -0.22em;
     text-decoration: none;
   }
-  nav {
-    display: flex;
-    gap: clamp(16px, 3vw, 32px);
-  }
-  nav a {
-    font-size: 0.85rem;
+  .entete__lien {
+    justify-self: start;
+    font-size: 0.8rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
     color: var(--texte-doux);
     transition: color 0.2s;
   }
-  nav a:hover {
+  .entete__lien--droite {
+    justify-self: end;
+  }
+  .entete__lien:hover {
     color: var(--lien);
+  }
+  @media (max-width: 420px) {
+    .entete__lien {
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+    }
   }
   .pied {
     border-top: 1px solid var(--bordure);
