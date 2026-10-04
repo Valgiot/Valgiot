@@ -54,7 +54,7 @@ const description = `${categorie.titre} — ${categorie.description ?? ''} Photo
         <div class="galerie">
           {categorie.selection.map((p, i) => (
             <a class="vignette" href={grands.get('selection')![i]} data-groupe="selection" style={format(p)}>
-              <Image src={p.image} alt={`${categorie.titre} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(min-width: 700px) 50vw, 100vw" />
+              <Image src={p.image} alt={p.alt ? `${p.alt} — ${categorie.titre}` : `${categorie.titre} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(min-width: 700px) 50vw, 100vw" />
             </a>
           ))}
         </div>
@@ -91,7 +91,7 @@ const description = `${categorie.titre} — ${categorie.description ?? ''} Photo
           <div class="galerie">
             {e.photos.map((p, i) => (
               <a class="vignette" href={grands.get(e.slug)![i]} data-groupe={e.slug} style={format(p)}>
-                <Image src={p.image} alt={`${e.titre} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(min-width: 700px) 50vw, 100vw" />
+                <Image src={p.image} alt={p.alt ? `${p.alt} — ${e.titre}` : `${e.titre} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(min-width: 700px) 50vw, 100vw" />
               </a>
             ))}
           </div>

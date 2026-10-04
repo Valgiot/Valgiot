@@ -9,14 +9,16 @@ import { SITE } from '../site';
 
     <h2>Éditeur du site</h2>
     <p>
-      {SITE.nom} — [Prénom Nom], [statut : auto-entrepreneur…]<br />
-      SIRET : [à compléter]<br />
-      Adresse : [à compléter], {SITE.ville}<br />
+      {SITE.nom}{SITE.mentions.responsable && ` — ${SITE.mentions.responsable}`}{
+        SITE.mentions.statut && `, ${SITE.mentions.statut}`
+      }<br />
+      {SITE.mentions.siret && <>SIRET : {SITE.mentions.siret}<br /></>}
+      {SITE.mentions.adresse ? <>Adresse : {SITE.mentions.adresse}<br /></> : <>Basé à {SITE.ville}<br /></>}
       Contact : <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
     </p>
 
     <h2>Hébergement</h2>
-    <p>[Nom de l'hébergeur, adresse — ex. Netlify, Inc., 512 2nd Street, San Francisco, CA 94107, USA]</p>
+    <p>{SITE.hebergeur}</p>
 
     <h2>Propriété intellectuelle</h2>
     <p>

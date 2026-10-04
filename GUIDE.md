@@ -22,7 +22,8 @@ Dossier **`src/accueil/`** : mets-y 3 à 6 photos **horizontales** (format paysa
 Elles défilent en boucle en plein écran, une toutes les 8 secondes. Le délai, le grand titre, la phrase en dessous
 et le texte du bouton se changent dans `src/site.ts` (`diaporamaSecondes`, `slogan`, `sloganSousTitre`, `boutonAccueil`).
 
-Choisis des photos avec une zone calme au centre (ciel, fond flou) : le titre s'affiche par-dessus.
+Le titre s'affiche dans le bas de la photo, sur un léger voile sombre : garde le sujet plutôt au centre ou en haut.
+Exporte-les en 2500 px de large minimum pour qu'elles restent nettes sur les grands écrans.
 
 ## Les logos "Ils m'ont fait confiance"
 
@@ -81,7 +82,10 @@ Dans `categorie.json`, indique le chemin de la photo à partir du dossier de la 
 ```
 
 Sans `couverture`, le site prend la première photo trouvée. Une photo **verticale** (format portrait) rend le mieux,
-avec le sujet au centre : le nom de la catégorie s'affiche au milieu du rectangle.
+avec le sujet au centre ou en haut : le nom de la catégorie s'affiche en bas du rectangle.
+
+Astuce : donne des noms parlants à tes fichiers (`02-padel.jpg` plutôt que `IMG_4521.jpg`). Le nom sert de
+description de la photo pour Google et l'accessibilité.
 
 ## Ajouter une catégorie (ex. Vidéo, Mariage, Immobilier…)
 
@@ -99,7 +103,8 @@ sur l'accueil, avec sa page. Le champ `ordre` règle sa position. Pour masquer u
 
 E-mail, Instagram, accroche et texte de présentation : fichier `src/site.ts`.
 Couleurs : en haut du fichier `src/styles/global.css`.
-Mentions légales (SIRET, adresse, hébergeur à compléter) : `src/pages/mentions-legales.astro`.
+Mentions légales : rubrique `mentions` dans `src/site.ts` (nom, statut, SIRET, adresse). Une ligne laissée vide
+n'apparaît pas sur le site : ajoute ton SIRET dès que tu l'as reçu.
 
 ## Ajouter des photos sans ordinateur de développement
 

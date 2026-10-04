@@ -22,7 +22,7 @@ type EvenementInfos = {
   videos?: string[];
 };
 
-export type Photo = { image: ImageMetadata; nom: string };
+export type Photo = { image: ImageMetadata; nom: string; alt?: string };
 
 export type Evenement = {
   slug: string;
@@ -61,6 +61,12 @@ const joliTitre = (slug: string) => {
   return t.charAt(0).toUpperCase() + t.slice(1);
 };
 
+// "02-stade-sm-caen.jpg" → "Stade sm caen" ; "01.jpg" → rien (nom sans description).
+const altDepuisNom = (nom: string) => {
+  const t = nom.replace(/\.[^.]+$/, '').replace(/^[\d\s_-]+/, '');
+  return t ? joliTitre(t) : undefined;
+};
+
 const parDate = (a: Evenement, b: Evenement) =>
   (a.ordre ?? Infinity) - (b.ordre ?? Infinity) ||
   (b.date?.getTime() ?? 0) - (a.date?.getTime() ?? 0) ||
@@ -89,8 +95,8 @@ function construire(): Categorie[] {
     const parts = chemin.slice(ROOT.length).split('/');
     const nom = parts[parts.length - 1];
     const cat = obtenir(parts[0]);
-    if (parts.length === 2) cat.selection.push({ image, nom });
-    else if (parts.length === 3) evenement(cat, parts[1]).photos.push({ image, nom });
+    if (parts.length === 2) cat.selection.push({ image, nom, alt: altDepuisNom(nom) });
+    else if (parts.length === 3) evenement(cat, parts[1]).photos.push({ image, nom, alt: altDepuisNom(nom) });
   }
 
   const cachees = new Set<string>();

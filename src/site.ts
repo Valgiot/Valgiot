@@ -18,4 +18,13 @@ export const SITE = {
   },
   ville: 'Caen',
   zone: 'Déplacements en Normandie et partout en France sur demande.',
+
+  // Mentions légales : remplis au fur et à mesure. Une ligne vide n'apparaît pas sur le site.
+  mentions: {
+    responsable: '', // Prénom Nom
+    statut: '', // ex. 'Micro-entrepreneur'
+    siret: '', // à ajouter dès que tu l'as reçu
+    adresse: '', // adresse professionnelle (ou domiciliation)
+  },
+  hebergeur: 'Netlify, Inc. — 512 2nd Street, Suite 200, San Francisco, CA 94107, États-Unis — www.netlify.com',
 };

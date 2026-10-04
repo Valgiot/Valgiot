@@ -171,7 +171,7 @@ const clients = Object.entries(
     min-height: 480px;
     overflow: hidden;
     display: grid;
-    place-items: center;
+    place-items: end center;
     color: #fff;
     background: var(--ocean);
   }
@@ -183,7 +183,8 @@ const clients = Object.entries(
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at center, rgb(6 20 32 / 0.35), rgb(6 20 32 / 0.15) 70%);
+    /* Voile sombre en bas pour que le texte reste lisible, même sur une photo claire. */
+    background: linear-gradient(to top, rgb(6 20 32 / 0.72), rgb(6 20 32 / 0.35) 40%, rgb(6 20 32 / 0.05) 70%);
   }
   .hero__diapo {
     position: absolute;
@@ -207,9 +208,9 @@ const clients = Object.entries(
     display: grid;
     justify-items: center;
     gap: 18px;
-    padding-inline: var(--marge);
+    padding: 0 var(--marge) clamp(72px, 13vh, 140px);
     text-align: center;
-    text-shadow: 0 2px 24px rgb(0 0 0 / 0.35);
+    text-shadow: 0 2px 24px rgb(0 0 0 / 0.4);
   }
   .hero h1 {
     font-size: clamp(2.4rem, 7vw, 5.2rem);
@@ -304,7 +305,7 @@ const clients = Object.entries(
   .carte {
     position: relative;
     display: grid;
-    place-items: center;
+    place-items: end center;
     aspect-ratio: 3 / 4;
     overflow: hidden;
     border-radius: 14px;
@@ -328,8 +329,16 @@ const clients = Object.entries(
     height: 100%;
     object-fit: cover;
   }
+  .carte::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 0 0;
+    background: linear-gradient(to top, rgb(6 20 32 / 0.45), transparent);
+  }
   .carte__titre {
     position: relative;
+    z-index: 1;
+    margin-bottom: clamp(14px, 2.4vw, 28px);
     padding: 8px 18px;
     border-radius: 8px;
     background: rgb(11 60 93 / 0.45);
