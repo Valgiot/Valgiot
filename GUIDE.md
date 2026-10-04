@@ -41,7 +41,7 @@ Exporte-les en 2500 px de large minimum pour qu'elles restent nettes sur les gra
 
 Dossier **`src/clients/`** : dépose les logos de tes clients (SVG ou PNG à fond transparent de préférence).
 Le nom du fichier sert de nom du client (ex. `sm-caen.png`). Ils s'affichent en gris et prennent leur couleur au survol.
-Supprime les fichiers `exemple-logo-…`. S'il n'y a aucun logo, la section disparaît toute seule.
+Tant qu'il n'y a aucun logo dans ce dossier, la section n'apparaît pas sur le site.
 
 Ne mets que des clients qui sont d'accord pour apparaître.
 
@@ -178,8 +178,19 @@ Le site s'ouvre sur http://localhost:4321 et se met à jour dès que tu ajoutes 
 
 ## Mettre le site en ligne (Netlify, gratuit)
 
-1. Crée un compte sur [netlify.com](https://www.netlify.com) avec ton compte GitHub.
-2. "Add new site" → "Import an existing project" → choisis ce dépôt GitHub.
-3. Les réglages sont déjà prêts (fichier `netlify.toml`) : clique sur "Deploy".
-4. Ensuite, chaque photo ajoutée sur GitHub met le site à jour automatiquement en 1 à 2 minutes.
-5. Achète ton nom de domaine (ex. `valg-studio.fr`), relie-le dans Netlify, et remplace l'adresse dans `astro.config.mjs`.
+Tout est déjà réglé (fichier `netlify.toml`) : il n'y a rien à configurer.
+
+1. Va sur [app.netlify.com/signup](https://app.netlify.com/signup) et inscris-toi avec **« Sign up with GitHub »**.
+2. Clique sur **« Add new project »** → **« Import an existing project »** → **GitHub**, autorise Netlify,
+   puis choisis le dépôt **valgiot/valgiot**.
+3. Vérifie que la branche est bien celle qui contient le site, laisse le reste tel quel et clique sur **« Deploy »**.
+4. Après 1 à 2 minutes, ton site est en ligne sur une adresse du type `https://xxxx.netlify.app`.
+   Dans **« Site configuration » → « Change site name »**, renomme-la par exemple en `valg-studio` →
+   `https://valg-studio.netlify.app`.
+5. Ensuite, chaque modification sur GitHub (photo ajoutée, texte changé) remet le site à jour tout seul.
+
+### Ton propre nom de domaine (environ 10 € par an)
+
+Achète par exemple `valg-studio.fr` (chez OVH, Gandi, ou directement dans Netlify : « Domain management » →
+« Add a domain »), puis suis les indications de Netlify pour le relier. L'adresse du site, du plan du site et des
+liens de partage se met à jour automatiquement.

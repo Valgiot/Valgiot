@@ -13,18 +13,29 @@
   --largeur: 1280px;
   --marge: clamp(16px, 4vw, 48px);
   --rayon: 4px;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
+/* Mode sombre : suit le réglage de l'appareil, sauf choix explicite (data-theme). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --fond: #121619;
     --surface: #1b2126;
     --texte: #e6e9ec;
     --texte-doux: #9aa4ae;
     --lien: #6fa7cc;
     --bordure: rgb(230 233 236 / 0.12);
+    color-scheme: dark;
   }
+}
+:root[data-theme='dark'] {
+  --fond: #121619;
+  --surface: #1b2126;
+  --texte: #e6e9ec;
+  --texte-doux: #9aa4ae;
+  --lien: #6fa7cc;
+  --bordure: rgb(230 233 236 / 0.12);
+  color-scheme: dark;
 }
 
 *,

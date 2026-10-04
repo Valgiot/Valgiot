@@ -112,6 +112,8 @@ const donneesStructurees = {
   .entete {
     position: sticky;
     top: 0;
+    /* Laisse la place de la barre d'état sur les téléphones à encoche. */
+    padding-top: env(safe-area-inset-top, 0px);
     z-index: 10;
     background: color-mix(in srgb, var(--fond) 88%, transparent);
     backdrop-filter: blur(10px);

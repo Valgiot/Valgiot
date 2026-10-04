@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  // À remplacer par l'adresse définitive du site (ex. https://valg-studio.fr)
-  site: 'https://valg-studio.fr',
+  // Adresse du site : fournie automatiquement par Netlify (adresse en .netlify.app, puis ton nom de domaine
+  // dès qu'il est relié). La valeur après ?? ne sert qu'en local.
+  site: process.env.URL ?? 'https://valg-studio.fr',
 });
