@@ -1,0 +1,403 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { categories, formatDate, lienVideo, type Categorie, type Photo } from '../lib/photos';
+import { SITE } from '../site';
+
+export function getStaticPaths() {
+  return categories.map((categorie) => ({ params: { categorie: categorie.slug }, props: { categorie } }));
+}
+
+interface Props {
+  categorie: Categorie;
+}
+
+const { categorie } = Astro.props;
+const index = categories.findIndex((c) => c.slug === categorie.slug);
+const suivante = categories[(index + 1) % categories.length];
+
+// Version grand format de chaque photo, pour l'affichage plein écran.
+const grandFormat = async (p: Photo) => (await getImage({ src: p.image, width: 2000 })).src;
+const groupes = [
+  ...(categorie.selection.length ? [{ id: 'selection', titre: 'Sélection', photos: categorie.selection }] : []),
+  ...categorie.evenements.map((e) => ({ id: e.slug, titre: e.titre, photos: e.photos })),
+];
+const grands = new Map<string, string[]>();
+for (const g of groupes) grands.set(g.id, await Promise.all(g.photos.map(grandFormat)));
+
+// Galerie "justifiée" : chaque photo prend une largeur proportionnelle à son format.
+const format = (p: Photo) => `--ratio: ${(p.image.width / p.image.height).toFixed(3)}`;
+
+const couverture = categorie.couverture ? (await getImage({ src: categorie.couverture, width: 1200 })).src : undefined;
+const description = `${categorie.titre} — ${categorie.description ?? ''} Photographe à ${SITE.ville}.`.trim();
+---
+
+<Base titre={`Photographe ${categorie.titre.toLowerCase()} à ${SITE.ville}`} description={description} image={couverture}>
+  <section class="entete-cat conteneur">
+    <a class="retour" href="/#portfolio">← Toutes les catégories</a>
+    <h1>{categorie.titre}</h1>
+    {categorie.description && <p>{categorie.description}</p>}
+    {
+      categorie.evenements.length > 1 && (
+        <nav class="sommaire" aria-label="Événements">
+          {categorie.evenements.map((e) => (
+            <a href={`#${e.slug}`}>{e.titre}</a>
+          ))}
+        </nav>
+      )
+    }
+  </section>
+
+  {
+    categorie.selection.length > 0 && (
+      <section class="bloc conteneur" id="selection" aria-label="Sélection">
+        <div class="galerie">
+          {categorie.selection.map((p, i) => (
+            <a class="vignette" href={grands.get('selection')![i]} data-groupe="selection" style={format(p)}>
+              <Image src={p.image} alt={`${categorie.titre} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(min-width: 700px) 50vw, 100vw" />
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    categorie.evenements.map((e) => (
+      <section class="bloc conteneur" id={e.slug} aria-labelledby={`titre-${e.slug}`}>
+        <header class="bloc__entete">
+          <h2 id={`titre-${e.slug}`}>{e.titre}</h2>
+          {(e.date || e.lieu) && (
+            <p class="bloc__meta">{[e.date && formatDate(e.date), e.lieu].filter(Boolean).join(' · ')}</p>
+          )}
+          {e.description && <p class="bloc__description">{e.description}</p>}
+        </header>
+        {e.videos.length > 0 && (
+          <div class="videos">
+            {e.videos.map((v, i) => (
+              <div class="video">
+                <iframe
+                  src={lienVideo(v)}
+                  title={`${e.titre} — vidéo ${i + 1}`}
+                  loading="lazy"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowfullscreen
+                />
+              </div>
+            ))}
+          </div>
+        )}
+        {e.photos.length > 0 && (
+          <div class="galerie">
+            {e.photos.map((p, i) => (
+              <a class="vignette" href={grands.get(e.slug)![i]} data-groupe={e.slug} style={format(p)}>
+                <Image src={p.image} alt={`${e.titre} — photo ${i + 1}`} widths={[400, 700, 1000]} sizes="(min-width: 700px) 50vw, 100vw" />
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
+    ))
+  }
+
+  <section class="fin conteneur">
+    <a class="fin__lien" href={`/${suivante.slug}/`}>
+      <span class="surtitre">Catégorie suivante</span>
+      <span class="fin__titre">{suivante.titre} →</span>
+    </a>
+    <a class="fin__lien" href="/#contact">
+      <span class="surtitre">Un projet ?</span>
+      <span class="fin__titre">Me contacter →</span>
+    </a>
+  </section>
+
+  <dialog class="visionneuse" aria-label="Photo en plein écran">
+    <img alt="" />
+    <button class="visionneuse__fermer" type="button" aria-label="Fermer">✕</button>
+    <button class="visionneuse__prec" type="button" aria-label="Photo précédente">‹</button>
+    <button class="visionneuse__suiv" type="button" aria-label="Photo suivante">›</button>
+    <p class="visionneuse__compteur" aria-live="polite"></p>
+  </dialog>
+</Base>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('.visionneuse')!;
+  const img = dialog.querySelector('img')!;
+  const compteur = dialog.querySelector('.visionneuse__compteur')!;
+  let liens: HTMLAnchorElement[] = [];
+  let position = 0;
+
+  const afficher = (i: number) => {
+    position = (i + liens.length) % liens.length;
+    const lien = liens[position];
+    img.src = lien.href;
+    img.alt = lien.querySelector('img')?.alt ?? '';
+    compteur.textContent = `${position + 1} / ${liens.length}`;
+    // Précharge la suivante pour une navigation fluide.
+    new Image().src = liens[(position + 1) % liens.length].href;
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('a[data-groupe]').forEach((lien) => {
+    lien.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      liens = [...document.querySelectorAll<HTMLAnchorElement>(`a[data-groupe="${lien.dataset.groupe}"]`)];
+      afficher(liens.indexOf(lien));
+      dialog.showModal();
+    });
+  });
+
+  dialog.querySelector('.visionneuse__fermer')!.addEventListener('click', () => dialog.close());
+  dialog.querySelector('.visionneuse__prec')!.addEventListener('click', () => afficher(position - 1));
+  dialog.querySelector('.visionneuse__suiv')!.addEventListener('click', () => afficher(position + 1));
+  dialog.addEventListener('click', (ev) => {
+    if (ev.target === dialog) dialog.close();
+  });
+  dialog.addEventListener('keydown', (ev) => {
+    if (ev.key === 'ArrowLeft') afficher(position - 1);
+    if (ev.key === 'ArrowRight') afficher(position + 1);
+  });
+
+  let departX = 0;
+  dialog.addEventListener('touchstart', (ev) => (departX = ev.touches[0].clientX), { passive: true });
+  dialog.addEventListener('touchend', (ev) => {
+    const dx = ev.changedTouches[0].clientX - departX;
+    if (Math.abs(dx) > 50) afficher(position + (dx < 0 ? 1 : -1));
+  });
+</script>
+
+<style>
+  .entete-cat {
+    padding-block: clamp(32px, 6vw, 72px) clamp(24px, 4vw, 40px);
+  }
+  .retour {
+    font-size: 0.85rem;
+    color: var(--texte-doux);
+    text-decoration: none;
+  }
+  .retour:hover {
+    color: var(--lien);
+  }
+  .entete-cat h1 {
+    margin-top: 20px;
+    font-size: clamp(2.4rem, 7vw, 4.5rem);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .entete-cat > p {
+    max-width: 60ch;
+    margin: 14px 0 0;
+    color: var(--texte-doux);
+  }
+  .sommaire {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .sommaire a {
+    padding: 6px 14px;
+    border: 1px solid var(--bordure);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .sommaire a:hover {
+    border-color: var(--lien);
+    color: var(--lien);
+  }
+
+  .bloc {
+    padding-block: clamp(24px, 4vw, 48px);
+    scroll-margin-top: 72px;
+  }
+  .bloc + .bloc {
+    border-top: 1px solid var(--bordure);
+  }
+  .bloc__entete {
+    margin-bottom: 20px;
+  }
+  .bloc__entete h2 {
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    font-weight: 500;
+  }
+  .bloc__meta {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+    color: var(--texte-doux);
+  }
+  .bloc__description {
+    max-width: 65ch;
+    margin: 10px 0 0;
+  }
+
+  .galerie {
+    --hauteur: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  @media (min-width: 700px) {
+    .galerie {
+      --hauteur: 280px;
+    }
+  }
+  @media (min-width: 1100px) {
+    .galerie {
+      --hauteur: 340px;
+    }
+  }
+  /* Évite que la dernière ligne soit étirée à l'excès. */
+  .galerie::after {
+    content: '';
+    flex-grow: 999;
+  }
+  .vignette {
+    flex: var(--ratio) 1 calc(var(--ratio) * var(--hauteur));
+    display: block;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    background: var(--surface);
+    cursor: zoom-in;
+  }
+  .vignette :global(img) {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: var(--ratio);
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .vignette:hover :global(img) {
+    transform: scale(1.025);
+  }
+
+  .videos {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  @media (min-width: 900px) {
+    .videos:has(.video + .video) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .video {
+    aspect-ratio: 16 / 9;
+    background: var(--surface);
+    border-radius: var(--rayon);
+    overflow: hidden;
+  }
+  .video iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .fin {
+    display: grid;
+    gap: 12px;
+    padding-block: clamp(40px, 6vw, 72px);
+  }
+  @media (min-width: 700px) {
+    .fin {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .fin__lien {
+    display: grid;
+    gap: 6px;
+    padding: 28px;
+    background: var(--surface);
+    border-radius: var(--rayon);
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .fin__lien:hover {
+    background: var(--ocean);
+    color: #fff;
+  }
+  .fin__lien:hover .surtitre {
+    color: rgb(255 255 255 / 0.7);
+  }
+  .fin__titre {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-weight: 500;
+  }
+
+  .visionneuse {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(8 12 16 / 0.96);
+    color: #fff;
+  }
+  .visionneuse[open] {
+    display: grid;
+    place-items: center;
+  }
+  .visionneuse::backdrop {
+    background: transparent;
+  }
+  .visionneuse img {
+    max-width: calc(100vw - 32px);
+    max-height: calc(100dvh - 96px);
+    width: auto;
+    object-fit: contain;
+  }
+  .visionneuse button {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.08);
+    color: #fff;
+    font: inherit;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .visionneuse button:hover {
+    background: rgb(255 255 255 / 0.18);
+  }
+  .visionneuse__fermer {
+    top: 16px;
+    right: 16px;
+    font-size: 1.1rem !important;
+  }
+  .visionneuse__prec,
+  .visionneuse__suiv {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .visionneuse__prec {
+    left: 16px;
+  }
+  .visionneuse__suiv {
+    right: 16px;
+  }
+  .visionneuse__compteur {
+    position: absolute;
+    bottom: 16px;
+    margin: 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+  }
+  @media (max-width: 600px) {
+    .visionneuse__prec,
+    .visionneuse__suiv {
+      top: auto;
+      bottom: 8px;
+      transform: none;
+    }
+  }
+</style>

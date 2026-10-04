@@ -1,0 +1,221 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { categories } from '../lib/photos';
+import { SITE } from '../site';
+---
+
+<Base>
+  <section class="intro conteneur">
+    <p class="surtitre">{SITE.nom} — {SITE.ville}, Normandie</p>
+    <h1>{SITE.accroche}</h1>
+    <p class="intro__texte">{SITE.sousTitre}</p>
+  </section>
+
+  <section id="portfolio" class="conteneur" aria-labelledby="titre-portfolio">
+    <h2 id="titre-portfolio" class="visuellement-cache">Portfolio</h2>
+    <ul class="grille" style={`--nb: ${categories.length}`}>
+      {
+        categories.map((c, i) => (
+          <li>
+            <a class="carte" href={`/${c.slug}/`}>
+              {c.couverture ? (
+                <Image
+                  src={c.couverture}
+                  alt=""
+                  widths={[360, 540, 720, 1080]}
+                  sizes="(min-width: 1100px) 25vw, 50vw"
+                  loading={i < 4 ? 'eager' : 'lazy'}
+                  class="carte__image"
+                />
+              ) : (
+                <span class="carte__image carte__image--vide" />
+              )}
+              <span class="carte__texte">
+                <span class="carte__numero">{String(i + 1).padStart(2, '0')}</span>
+                <span class="carte__titre">{c.titre}</span>
+                <span class="carte__voir">Voir la galerie →</span>
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="contact" class="contact" aria-labelledby="titre-contact">
+    <div class="conteneur contact__contenu">
+      <div>
+        <p class="surtitre surtitre--clair">Contact</p>
+        <h2 id="titre-contact">Un projet ? Parlons-en.</h2>
+        <p class="contact__zone">Basé à {SITE.ville}. {SITE.zone}</p>
+      </div>
+      <ul class="contact__liens">
+        <li>
+          <span class="contact__label">E-mail</span>
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </li>
+        <li>
+          <span class="contact__label">Instagram</span>
+          <a href={SITE.instagram.url} target="_blank" rel="me noopener">@{SITE.instagram.pseudo}</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .intro {
+    padding-block: clamp(48px, 9vw, 112px) clamp(32px, 5vw, 56px);
+  }
+  .intro h1 {
+    margin-top: 14px;
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+    font-weight: 500;
+  }
+  .intro__texte {
+    max-width: 52ch;
+    margin: 16px 0 0;
+    color: var(--texte-doux);
+    font-size: clamp(1rem, 1.6vw, 1.15rem);
+  }
+
+  .grille {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(10px, 1.5vw, 20px);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 1100px) {
+    .grille {
+      grid-template-columns: repeat(min(var(--nb), 4), 1fr);
+    }
+  }
+
+  .carte {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    background: var(--surface);
+    color: #fff;
+    text-decoration: none;
+  }
+  .carte__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .carte::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(6 20 32 / 0.72), rgb(6 20 32 / 0.05) 55%);
+    transition: background-color 0.4s;
+  }
+  .carte:hover .carte__image,
+  .carte:focus-visible .carte__image {
+    transform: scale(1.04);
+  }
+  .carte:hover::after {
+    background-color: rgb(11 60 93 / 0.25);
+  }
+  .carte__texte {
+    position: absolute;
+    z-index: 1;
+    inset: auto 0 0 0;
+    padding: clamp(18px, 2vw, 28px);
+    display: grid;
+    gap: 4px;
+  }
+  .carte__numero {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    opacity: 0.75;
+  }
+  .carte__titre {
+    font-size: clamp(1rem, 3.6vw, 1.8rem);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .carte__voir {
+    font-size: 0.8rem;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  .carte:hover .carte__voir,
+  .carte:focus-visible .carte__voir {
+    opacity: 0.9;
+    transform: none;
+  }
+
+  .contact {
+    margin-top: clamp(64px, 10vw, 128px);
+    background: var(--ocean);
+    color: #eef3f7;
+  }
+  .contact__contenu {
+    display: grid;
+    gap: 32px;
+    padding-block: clamp(48px, 8vw, 96px);
+  }
+  @media (min-width: 800px) {
+    .contact__contenu {
+      grid-template-columns: 1.2fr 1fr;
+      align-items: end;
+    }
+  }
+  .contact h2 {
+    margin-top: 12px;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 500;
+  }
+  .surtitre--clair {
+    color: rgb(238 243 247 / 0.7);
+  }
+  .contact__zone {
+    margin: 12px 0 0;
+    color: rgb(238 243 247 / 0.75);
+  }
+  .contact__liens {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+  }
+  .contact__liens li {
+    display: grid;
+    gap: 2px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgb(238 243 247 / 0.2);
+  }
+  .contact__label {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgb(238 243 247 / 0.65);
+  }
+  .contact__liens a {
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .contact__liens a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+</style>
+
+<style is:global>
+  /* Le contact sert de fin de page : pas de marge en plus avant le pied de page. */
+  body:has(#contact) .pied {
+    border-top: 0;
+  }
+</style>

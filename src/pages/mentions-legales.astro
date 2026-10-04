@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site';
+---
+
+<Base titre="Mentions légales" description={`Mentions légales et confidentialité du site ${SITE.nom}.`}>
+  <article class="conteneur texte">
+    <h1>Mentions légales</h1>
+
+    <h2>Éditeur du site</h2>
+    <p>
+      {SITE.nom} — [Prénom Nom], [statut : auto-entrepreneur…]<br />
+      SIRET : [à compléter]<br />
+      Adresse : [à compléter], {SITE.ville}<br />
+      Contact : <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    </p>
+
+    <h2>Hébergement</h2>
+    <p>[Nom de l'hébergeur, adresse — ex. Netlify, Inc., 512 2nd Street, San Francisco, CA 94107, USA]</p>
+
+    <h2>Propriété intellectuelle</h2>
+    <p>
+      Toutes les photographies et vidéos présentes sur ce site sont la propriété exclusive de {SITE.nom}, sauf mention
+      contraire. Toute reproduction, diffusion ou utilisation sans autorisation écrite préalable est interdite.
+    </p>
+
+    <h2>Données personnelles</h2>
+    <p>
+      Ce site ne dépose aucun cookie publicitaire ni de suivi. Les informations que vous envoyez par e-mail sont
+      utilisées uniquement pour répondre à votre demande et ne sont jamais transmises à des tiers. Vous pouvez demander
+      leur suppression à tout moment à <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+    </p>
+
+    <h2>Droit à l'image</h2>
+    <p>
+      Si vous apparaissez sur une photo et souhaitez qu'elle soit retirée, écrivez à
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a> : elle sera retirée dans les meilleurs délais.
+    </p>
+  </article>
+</Base>
+
+<style>
+  .texte {
+    max-width: 760px;
+    padding-block: clamp(40px, 7vw, 88px);
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 500;
+    margin-bottom: 32px;
+  }
+  h2 {
+    font-size: 1.1rem;
+    margin-top: 32px;
+  }
+  p {
+    color: var(--texte-doux);
+  }
+  a {
+    color: var(--lien);
+  }
+</style>

@@ -1,0 +1,128 @@
+---
+import '@fontsource-variable/manrope';
+import '../styles/global.css';
+import { SITE } from '../site';
+
+interface Props {
+  titre?: string;
+  description?: string;
+  image?: string;
+}
+
+const { titre, description = SITE.description, image } = Astro.props;
+const titreComplet = titre ? `${titre} — ${SITE.nom}` : `${SITE.nom} — ${SITE.accroche}`;
+const canonique = new URL(Astro.url.pathname, Astro.site);
+const annee = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonique} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0b3c5d" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:title" content={titreComplet} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonique} />
+    {image && <meta property="og:image" content={new URL(image, Astro.site)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <header class="entete">
+      <div class="conteneur entete__barre">
+        <a class="logo" href="/" aria-label={`${SITE.nom} — accueil`}>{SITE.nom}</a>
+        <nav aria-label="Navigation principale">
+          <a href="/#portfolio">Portfolio</a>
+          <a href="/#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="pied">
+      <div class="conteneur pied__barre">
+        <p>© {annee} {SITE.nom} — Photographe à {SITE.ville}</p>
+        <p class="pied__liens">
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={SITE.instagram.url} rel="me noopener" target="_blank">Instagram</a>
+          <a href="/mentions-legales">Mentions légales</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .entete {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--fond) 88%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--bordure);
+  }
+  .entete__barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.22em;
+    text-decoration: none;
+  }
+  nav {
+    display: flex;
+    gap: clamp(16px, 3vw, 32px);
+  }
+  nav a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--texte-doux);
+    transition: color 0.2s;
+  }
+  nav a:hover {
+    color: var(--lien);
+  }
+  .pied {
+    border-top: 1px solid var(--bordure);
+    padding-block: 28px;
+    font-size: 0.85rem;
+    color: var(--texte-doux);
+  }
+  .pied__barre {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    justify-content: space-between;
+  }
+  .pied p {
+    margin: 0;
+  }
+  .pied__liens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+  }
+  .pied a {
+    text-decoration: none;
+  }
+  .pied a:hover {
+    color: var(--lien);
+  }
+</style>
