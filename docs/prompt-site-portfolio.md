@@ -11,15 +11,16 @@
 Tu es un développeur front-end senior et un directeur artistique spécialisé dans les portfolios de photographes. Crée-moi un site portfolio complet, épuré et élégant.
 
 ## Qui je suis
-- Nom / marque : [Prénom Nom ou nom de marque]
-- Basé à : [Ville, région] — je me déplace [zone]
-- Métier : photographe, spécialisé en sport à la base. Je fais aussi de la photo culinaire / restaurants, du portrait et de l'événementiel. Je débute la vidéo et je veux la développer.
-- Positionnement en une phrase : "[ex. Photographe sport & lifestyle — l'instant, l'énergie, l'émotion.]"
+- Marque : V.A.L.G (studio : valg_studio) — le logo/texte "V.A.L.G" doit apparaître tel quel, avec les points.
+- Basé à : Caen (Normandie) — je me déplace dans toute la Normandie, et partout en France sur demande.
+- Instagram : @valg_studio__ (https://www.instagram.com/valg_studio__/)
+- Métier : photographe polyvalent, "photographe sur tout". Mon origine est le sport, et je couvre aussi la photo culinaire / restaurants, le portrait et l'événementiel. Je débute la vidéo et je veux la développer. La liste des catégories doit pouvoir s'allonger (ex. immobilier, mariage, produit…).
+- Positionnement en une phrase : "V.A.L.G — Photographe & vidéaste à Caen. Sport, food, portrait, événements : chaque sujet mérite son image."
 - Langue(s) du site : [français uniquement / français + anglais]
 
 ## Objectif du site
 1. Montrer mon travail de façon qualitative (la photo est la star, l'interface s'efface).
-2. Obtenir des demandes de devis de : [clubs et athlètes, restaurants et chefs, entreprises et agences, particuliers].
+2. Obtenir des demandes de devis de : clubs et athlètes, restaurants et chefs, entreprises et agences, particuliers — principalement à Caen et en Normandie.
 3. Pouvoir être mis à jour TRÈS souvent et facilement, sans toucher au code : ajouter un projet, une catégorie (ex. "Vidéo" qui va grossir), des photos ou des vidéos.
 
 ## Direction artistique
@@ -37,7 +38,7 @@ Tu es un développeur front-end senior et un directeur artistique spécialisé d
 
 ## Structure des pages
 1. Accueil
-   - En-tête minimal : logo/nom à gauche, menu à droite (Portfolio, Vidéo, À propos, Contact). Menu burger sur mobile.
+   - En-tête minimal : "V.A.L.G" à gauche (texte typographique en attendant un logo), menu à droite (Portfolio, Vidéo, À propos, Contact). Menu burger sur mobile.
    - Section d'intro courte : mon nom, ma phrase de positionnement, éventuellement une grande photo plein écran (ou une boucle vidéo muette de 5–10 s, optionnelle et désactivable).
    - Grille des catégories : une tuile par catégorie, chacune illustrée par UNE photo forte + le nom de la catégorie. Au survol : léger zoom et assombrissement, le nom apparaît/s'affirme. Ordre : Sport, Food & Restaurants, Portrait, Événements, Vidéo.
    - Les catégories sont générées automatiquement à partir du contenu (ajouter une catégorie = ajouter un fichier, pas modifier la page).
@@ -58,7 +59,8 @@ Tu es un développeur front-end senior et un directeur artistique spécialisé d
    - Portrait de moi, texte court, mon approche, matériel (optionnel), quelques références clients.
 6. Contact
    - Formulaire : nom, e-mail, téléphone (optionnel), type de prestation (liste déroulante reprenant les catégories), date et lieu, budget indicatif (optionnel), message.
-   - E-mail, Instagram, [autres réseaux]. Pas de flux Instagram intégré.
+   - E-mail, lien Instagram @valg_studio__ (aussi en pied de page sur toutes les pages), [autres réseaux]. Pas de flux Instagram intégré.
+   - Mention : "Basé à Caen — déplacements en Normandie et partout en France sur demande."
 7. Pages légales : mentions légales, politique de confidentialité (RGPD).
 
 ## Contenu évolutif (point le plus important)
@@ -82,7 +84,7 @@ Tu es un développeur front-end senior et un directeur artistique spécialisé d
 - Mobile first : la majorité des visiteurs viennent d'Instagram sur téléphone.
 - Performance : score Lighthouse ≥ 90 sur mobile, première image affichée en moins de 2 s.
 - Accessibilité : contrastes AA, navigation clavier, textes alternatifs obligatoires, respect de "prefers-reduced-motion".
-- SEO : balises title/description par page, image Open Graph par projet, sitemap, données structurées (Person + LocalBusiness), URLs propres (/sport/nom-du-projet).
+- SEO : balises title/description par page, image Open Graph par projet, sitemap, données structurées (Person + LocalBusiness, adresse Caen, zone desservie Normandie / France, lien Instagram en "sameAs"), titres orientés local ("Photographe sport à Caen", "Photographe culinaire Normandie"…), URLs propres (/sport/nom-du-projet).
 - Pas de blocage du clic droit, pas de filigrane sur les photos.
 
 ## Ce que j'attends de toi
