@@ -16,6 +16,22 @@ src/photos/
 └── evenements/
 ```
 
+## Les photos du diaporama de l'accueil
+
+Dossier **`src/accueil/`** : mets-y 3 à 6 photos **horizontales** (format paysage), nommées `01.jpg`, `02.jpg`…
+Elles défilent en boucle en plein écran, une toutes les 8 secondes. Le délai, le grand titre, la phrase en dessous
+et le texte du bouton se changent dans `src/site.ts` (`diaporamaSecondes`, `slogan`, `sloganSousTitre`, `boutonAccueil`).
+
+Choisis des photos avec une zone calme au centre (ciel, fond flou) : le titre s'affiche par-dessus.
+
+## Les logos "Ils m'ont fait confiance"
+
+Dossier **`src/clients/`** : dépose les logos de tes clients (SVG ou PNG à fond transparent de préférence).
+Le nom du fichier sert de nom du client (ex. `sm-caen.png`). Ils s'affichent en gris et prennent leur couleur au survol.
+Supprime les fichiers `exemple-logo-…`. S'il n'y a aucun logo, la section disparaît toute seule.
+
+Ne mets que des clients qui sont d'accord pour apparaître.
+
 ## Ajouter un événement (le plus courant)
 
 1. Crée un dossier dans la bonne catégorie, en minuscules et sans espaces ni accents : `src/photos/sport/match-sm-caen-2026/`
@@ -64,7 +80,8 @@ Dans `categorie.json`, indique le chemin de la photo à partir du dossier de la 
 }
 ```
 
-Sans `couverture`, le site prend la première photo trouvée. Une photo **verticale** (format portrait) rend le mieux.
+Sans `couverture`, le site prend la première photo trouvée. Une photo **verticale** (format portrait) rend le mieux,
+avec le sujet au centre : le nom de la catégorie s'affiche au milieu du rectangle.
 
 ## Ajouter une catégorie (ex. Vidéo, Mariage, Immobilier…)
 

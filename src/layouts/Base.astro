@@ -7,9 +7,11 @@ interface Props {
   titre?: string;
   description?: string;
   image?: string;
+  /** En-tête transparent posé sur une grande photo (page d'accueil). */
+  transparent?: boolean;
 }
 
-const { titre, description = SITE.description, image } = Astro.props;
+const { titre, description = SITE.description, image, transparent = false } = Astro.props;
 const titreComplet = titre ? `${titre} — ${SITE.nom}` : `${SITE.nom} — ${SITE.accroche}`;
 const canonique = new URL(Astro.url.pathname, Astro.site);
 const annee = new Date().getFullYear();
@@ -34,11 +36,11 @@ const annee = new Date().getFullYear();
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
-    <header class="entete">
+    <header class:list={["entete", { "entete--transparent": transparent }]}>
       <div class="conteneur entete__barre">
         <a class="logo" href="/" aria-label={`${SITE.nom} — accueil`}>{SITE.nom}</a>
         <nav aria-label="Navigation principale">
-          <a href="/#portfolio">Portfolio</a>
+          <a href="/#explorer">Portfolio</a>
           <a href="/#contact">Contact</a>
         </nav>
       </div>
@@ -58,6 +60,15 @@ const annee = new Date().getFullYear();
         </p>
       </div>
     </footer>
+
+    {
+      transparent && (
+        <script
+          is:inline
+          set:html={`const e=document.querySelector('.entete');const f=()=>e.classList.toggle('entete--plein',scrollY>innerHeight*0.6);addEventListener('scroll',f,{passive:true});f();`}
+        />
+      )
+    }
   </body>
 </html>
 
@@ -70,6 +81,26 @@ const annee = new Date().getFullYear();
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--bordure);
+  }
+  .entete--transparent {
+    position: fixed;
+    inset: 0 0 auto 0;
+    background: linear-gradient(to bottom, rgb(6 20 32 / 0.45), transparent);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom-color: transparent;
+    color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .entete--transparent nav a {
+    color: rgb(255 255 255 / 0.85);
+  }
+  .entete--transparent nav a:hover {
+    color: #fff;
+  }
+  .entete--transparent.entete--plein {
+    background: var(--ocean);
+    color: #fff;
   }
   .entete__barre {
     display: flex;
