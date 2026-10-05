@@ -54,7 +54,8 @@ src/photos/
 | Marques → Craft | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/marques/craft) |
 | Logos clients | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/clients) |
 
-Pour **remplacer** une photo, envoie la nouvelle avec exactement le même nom de fichier. Les photos s'affichent dans
+Pense à exporter tes photos en 2500 px avant l'envoi (voir « Préparer ses photos » plus bas) : au-delà de 25 Mo,
+GitHub refuse le fichier. Pour **remplacer** une photo, envoie la nouvelle avec exactement le même nom de fichier. Les photos s'affichent dans
 l'ordre de leur nom (`01-…`, `02-…`) et la première devient la photo du carré.
 Sur téléphone, ouvre ces liens dans le navigateur (pas dans l'application GitHub).
 
@@ -147,10 +148,24 @@ Crée un nouveau dossier dans `src/photos/` avec un `categorie.json` (titre, des
 descriptionSeo) : un nouveau rectangle apparaît sur l'accueil, avec sa page. Le champ `ordre` règle sa position.
 Pour masquer un univers sans le supprimer : `"visible": false`.
 
-## Préparer ses photos
+## Préparer ses photos (important)
 
-- Exporte en JPG, **2500 px maximum** sur le grand côté, qualité 80–85 % (le site recrée ensuite les tailles adaptées).
-- Le site supprime automatiquement les données EXIF/GPS des images affichées.
+GitHub refuse tout fichier de plus de **25 Mo** (message « The file is too large »). Les originaux de l'appareil
+sont souvent plus lourds : il faut donc **exporter** les photos avant de les envoyer. Le site n'a de toute façon pas
+besoin de plus de 2500 px.
+
+**Réglages d'export dans Lightroom Classic** (Fichier → Exporter) :
+
+- **Paramètres du fichier** : JPEG, qualité **85**, espace colorimétrique **sRGB**
+- **Dimensionnement de l'image** : cocher « Redimensionner », **Bord long : 2500 pixels**
+- **Netteté de sortie** : Écran, standard
+- **Métadonnées** : « Copyright uniquement », et cocher « Supprimer les infos de lieu »
+- **Nom du fichier** (facultatif) : un nom parlant, ex. `padel-x-live-01` : il sert de description pour Google
+
+Clique sur « Ajouter » en bas à gauche pour l'enregistrer en paramètre prédéfini « Site V.A.L.G » : la prochaine
+fois, un clic suffit. Dans Lightroom (version mobile/cloud) : Exporter → JPG, Bord long 2500 px, qualité 85.
+
+Chaque photo pèse alors 1 à 4 Mo : tu peux en envoyer une dizaine d'un coup sans problème.
 
 ## Modifier les informations générales
 
