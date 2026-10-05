@@ -46,9 +46,9 @@ const clients = Object.entries(
           <Image
             src={image}
             alt=""
-            widths={[800, 1280, 1920, 2560, 3200]}
-            quality={88}
-            sizes="100vw"
+            widths={[800, 1280, 1920, 2500]}
+            quality={90}
+            sizes="(max-aspect-ratio: 16/9) 178vh, 100vw"
             loading={i === 0 ? 'eager' : 'lazy'}
             fetchpriority={i === 0 ? 'high' : 'auto'}
             class:list={['hero__diapo', { 'est-active': i === 0 }]}
@@ -180,6 +180,8 @@ const clients = Object.entries(
     /* Voile sombre en bas pour que le texte reste lisible, même sur une photo claire. */
     background: linear-gradient(to top, rgb(6 20 32 / 0.72), rgb(6 20 32 / 0.35) 40%, rgb(6 20 32 / 0.05) 70%);
   }
+  /* Sur un écran en hauteur (téléphone), la photo est recadrée : elle est affichée plus large que l'écran,
+     d'où le "178vh" (16/9 de la hauteur) dans l'attribut sizes, pour charger une version assez grande. */
   .hero__diapo {
     position: absolute;
     inset: 0;
