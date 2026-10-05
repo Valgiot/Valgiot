@@ -17,7 +17,7 @@ const { href, titre, sousTitre, image, format = 'vertical', sizes = '(min-width:
 ---
 
 <a class:list={['carte', `carte--${format}`, { 'carte--vide': !image }]} href={href}>
-  {image && <Image src={image} alt="" widths={[320, 480, 720, 1080]} sizes={sizes} class="carte__image" />}
+  {image && <Image src={image} alt="" widths={[320, 480, 720, 1080]} sizes={sizes} quality={88} class="carte__image" />}
   <span class="carte__texte">
     <span class="carte__titre">{titre}</span>
     {sousTitre && <span class="carte__sous-titre">{sousTitre}</span>}

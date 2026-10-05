@@ -13,7 +13,11 @@ interface Props {
 }
 
 const { photos, groupe, contexte } = Astro.props;
-const grands = await Promise.all(photos.map(async (p) => (await getImage({ src: p.image, width: 2000 })).src));
+// Qualité élevée : c'est un portfolio photo, la netteté passe avant le poids des fichiers.
+const QUALITE = 90;
+const grands = await Promise.all(
+  photos.map(async (p) => (await getImage({ src: p.image, width: 2560, quality: QUALITE })).src),
+);
 const format = (p: Photo) => `--ratio: ${(p.image.width / p.image.height).toFixed(3)}`;
 ---
 
@@ -24,8 +28,9 @@ const format = (p: Photo) => `--ratio: ${(p.image.width / p.image.height).toFixe
         <Image
           src={p.image}
           alt={p.alt ? `${p.alt} — ${contexte}` : `${contexte} — photo ${i + 1}`}
-          widths={[400, 700, 1000]}
-          sizes="(min-width: 700px) 50vw, 100vw"
+          widths={[480, 800, 1200, 1600, 2000]}
+          sizes="(min-width: 1100px) 50vw, (min-width: 700px) 66vw, 100vw"
+          quality={QUALITE}
         />
       </a>
     ))
