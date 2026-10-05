@@ -28,6 +28,36 @@ src/photos/
     └── 01-portrait-plage.jpg
 ```
 
+## Ajouter des photos en un clic
+
+1. Clique sur le lien du bon dossier ci-dessous (connecte-toi à GitHub si on te le demande).
+2. Glisse tes photos dans la zone « Drag files here » (ou clique sur « choose your files »).
+3. En bas de la page, clique sur le bouton vert **« Commit changes »**.
+4. Attends 1 à 2 minutes : le site en ligne se met à jour tout seul.
+
+| Où | Lien pour ajouter des photos |
+|---|---|
+| Diaporama de l'accueil | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/accueil) |
+| Sport → Football | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/football) |
+| Sport → Ski | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/ski) |
+| Sport → Padel | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/padel) |
+| Sport → MMA | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/mma) |
+| Sport → Athlétisme | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/athletisme) |
+| Sport → Cyclisme | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/cyclisme) |
+| Entreprises → Abeille Assurance | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/entreprises/abeille-assurance) |
+| Entreprises → Le Club Porticcio | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/entreprises/le-club-porticcio) |
+| Portrait | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/portrait) |
+| Événements → Nuit des Combattants | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/evenements/nuit-des-combattants) |
+| Événements → 30 ans MNK | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/evenements/30-ans-mnk) |
+| Événements → French Dart Festival | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/evenements/french-dart-festival) |
+| Événements → Padel X Live | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/evenements/padel-x-live) |
+| Marques → Craft | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/marques/craft) |
+| Logos clients | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/clients) |
+
+Pour **remplacer** une photo, envoie la nouvelle avec exactement le même nom de fichier. Les photos s'affichent dans
+l'ordre de leur nom (`01-…`, `02-…`) et la première devient la photo du carré.
+Sur téléphone, ouvre ces liens dans le navigateur (pas dans l'application GitHub).
+
 ## Les photos du diaporama de l'accueil
 
 Dossier **`src/accueil/`** : mets-y 3 à 6 photos **horizontales** (format paysage), nommées `01.jpg`, `02.jpg`…
