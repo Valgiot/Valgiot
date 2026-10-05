@@ -66,9 +66,10 @@ const joliTitre = (slug: string) => {
   return t.charAt(0).toUpperCase() + t.slice(1);
 };
 
-// "02-stade-sm-caen.jpg" → "Stade sm caen" ; "01.jpg" → rien (nom sans description).
+// "02-stade-sm-caen.jpg" → "Stade sm caen" ; "01.jpg" ou "DSC01220.jpg" (nom de l'appareil) → rien.
 const altDepuisNom = (nom: string) => {
   const t = nom.replace(/\.[^.]+$/, '').replace(/^[\d\s_-]+/, '');
+  if (/^(dsc|dscf|img|mg|_mg|dji|gopr|p|pxl|r)[_-]?\d+/i.test(t)) return undefined;
   return t ? joliTitre(t) : undefined;
 };
 
