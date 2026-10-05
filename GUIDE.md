@@ -32,8 +32,11 @@ src/photos/
 
 1. Clique sur le lien du bon dossier ci-dessous (connecte-toi à GitHub si on te le demande).
 2. Glisse tes photos dans la zone « Drag files here » (ou clique sur « choose your files »).
-3. En bas de la page, clique sur le bouton vert **« Commit changes »**.
-4. Attends 1 à 2 minutes : le site en ligne se met à jour tout seul.
+3. Pour **mettre en ligne tout de suite** : sous la zone d'envoi, dans le premier champ (où est écrit en gris
+   « Add files via upload »), écris **publier**. Sinon, laisse-le vide : les photos sont gardées et partiront
+   à la prochaine publication (voir « Publier le site » plus bas).
+4. Clique sur le bouton vert **« Commit changes »**.
+5. Si tu as écrit « publier » : attends 2 à 3 minutes, le site en ligne est à jour.
 
 | Où | Lien pour ajouter des photos |
 |---|---|
@@ -178,7 +181,7 @@ n'apparaît pas sur le site : ajoute ton SIRET dès que tu l'as reçu.
 
 Sur github.com, ouvre le dossier voulu dans `src/photos/`, puis "Add file" → "Upload files" et glisse tes photos.
 Pour créer une sous-partie, utilise "Add file" → "Create new file" et tape `nom-du-dossier/infos.json`.
-Une fois le site relié à Netlify (voir plus bas), il se met à jour tout seul.
+Écris « publier » dans le message pour mettre le site en ligne (voir « Publier le site » plus bas).
 
 ## Référencement Google (SEO)
 
@@ -221,6 +224,17 @@ npm run dev
 
 Le site s'ouvre sur http://localhost:4321 et se met à jour dès que tu ajoutes une photo.
 
+## Publier le site (économiser le quota Netlify)
+
+Chaque mise en ligne consomme du quota Netlify. Pour ne pas l'épuiser, le site **ne se met à jour que si un message
+d'envoi contient le mot « publier »** (majuscules ou minuscules, peu importe).
+
+- Tu peux envoyer des photos en plusieurs fois **sans** écrire « publier » : rien n'est consommé, tout est gardé.
+- Quand tu as fini, écris **publier** dans le message du **dernier** envoi : tout ce qui a été envoyé depuis la
+  dernière publication part en ligne d'un coup.
+- Tu as oublié ? Sur Netlify : **Deploys** → **Trigger deploy** → **Deploy site** publie l'état actuel.
+- Quand tu me demandes une modification, précise si tu veux qu'elle soit mise en ligne tout de suite.
+
 ## Mettre le site en ligne (Netlify, gratuit)
 
 Tout est déjà réglé (fichier `netlify.toml`) : il n'y a rien à configurer.
@@ -232,7 +246,7 @@ Tout est déjà réglé (fichier `netlify.toml`) : il n'y a rien à configurer.
 4. Après 1 à 2 minutes, ton site est en ligne sur une adresse du type `https://xxxx.netlify.app`.
    Dans **« Site configuration » → « Change site name »**, renomme-la par exemple en `valg-studio` →
    `https://valg-studio.netlify.app`.
-5. Ensuite, chaque modification sur GitHub (photo ajoutée, texte changé) remet le site à jour tout seul.
+5. Ensuite, le site se met à jour quand un envoi contient le mot « publier » (voir « Publier le site »).
 
 ### Ton propre nom de domaine (environ 10 € par an)
 

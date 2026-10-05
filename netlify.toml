@@ -1,6 +1,8 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  # Ne met le site en ligne que si un message d'envoi contient « publier » (voir le script et GUIDE.md).
+  ignore = "bash scripts/netlify-publier.sh"
 
 [build.environment]
   NODE_VERSION = "22"
