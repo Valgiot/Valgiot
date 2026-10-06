@@ -32,11 +32,8 @@ src/photos/
 
 1. Clique sur le lien du bon dossier ci-dessous (connecte-toi à GitHub si on te le demande).
 2. Glisse tes photos dans la zone « Drag files here » (ou clique sur « choose your files »).
-3. Pour **mettre en ligne tout de suite** : sous la zone d'envoi, dans le premier champ (où est écrit en gris
-   « Add files via upload »), écris **publier**. Sinon, laisse-le vide : les photos sont gardées et partiront
-   à la prochaine publication (voir « Publier le site » plus bas).
-4. Clique sur le bouton vert **« Commit changes »**.
-5. Si tu as écrit « publier » : attends 2 à 3 minutes, le site en ligne est à jour.
+3. Clique sur le bouton vert **« Commit changes »**.
+4. Attends 3 à 5 minutes : le site en ligne se met à jour tout seul (voir « Mise en ligne » plus bas).
 
 | Où | Lien pour ajouter des photos |
 |---|---|
@@ -181,7 +178,7 @@ n'apparaît pas sur le site : ajoute ton SIRET dès que tu l'as reçu.
 
 Sur github.com, ouvre le dossier voulu dans `src/photos/`, puis "Add file" → "Upload files" et glisse tes photos.
 Pour créer une sous-partie, utilise "Add file" → "Create new file" et tape `nom-du-dossier/infos.json`.
-Écris « publier » dans le message pour mettre le site en ligne (voir « Publier le site » plus bas).
+Le site en ligne se met à jour tout seul quelques minutes après.
 
 ## Référencement Google (SEO)
 
@@ -224,32 +221,30 @@ npm run dev
 
 Le site s'ouvre sur http://localhost:4321 et se met à jour dès que tu ajoutes une photo.
 
-## Publier le site (économiser le quota Netlify)
+## Mise en ligne (Cloudflare, gratuit)
 
-Chaque mise en ligne consomme du quota Netlify. Pour ne pas l'épuiser, le site **ne se met à jour que si un message
-d'envoi contient le mot « publier »** (majuscules ou minuscules, peu importe).
+Le site est hébergé gratuitement par **Cloudflare** : https://valg-studio.crazy-gamer50700.workers.dev
+Les visites sont illimitées et il n'y a pas de crédits à surveiller.
 
-- Tu peux envoyer des photos en plusieurs fois **sans** écrire « publier » : rien n'est consommé, tout est gardé.
-- Quand tu as fini, écris **publier** dans le message du **dernier** envoi : tout ce qui a été envoyé depuis la
-  dernière publication part en ligne d'un coup.
-- Tu as oublié ? Sur Netlify : **Deploys** → **Trigger deploy** → **Deploy site** publie l'état actuel.
-- Quand tu me demandes une modification, précise si tu veux qu'elle soit mise en ligne tout de suite.
+- **Chaque envoi sur GitHub remet le site en ligne tout seul**, en 3 à 5 minutes (le temps de préparer les photos).
+- Pour suivre une mise en ligne : sur [dash.cloudflare.com](https://dash.cloudflare.com), **Workers & Pages** →
+  **valg-studio** → **Deployments**. Quand les étapes sont vertes, c'est en ligne.
+- Une seule mise en ligne se fait à la fois : si tu envoies plusieurs paquets de photos d'affilée, les mises en
+  ligne attendent leur tour. Mieux vaut envoyer un gros paquet que dix petits.
+- Une étape en rouge ? Le site précédent reste en ligne, rien n'est cassé : envoie une capture du journal à Claude.
 
-## Mettre le site en ligne (Netlify, gratuit)
-
-Tout est déjà réglé (fichier `netlify.toml`) : il n'y a rien à configurer.
-
-1. Va sur [app.netlify.com/signup](https://app.netlify.com/signup) et inscris-toi avec **« Sign up with GitHub »**.
-2. Clique sur **« Add new project »** → **« Import an existing project »** → **GitHub**, autorise Netlify,
-   puis choisis le dépôt **valgiot/valgiot**.
-3. Vérifie que la branche est bien celle qui contient le site, laisse le reste tel quel et clique sur **« Deploy »**.
-4. Après 1 à 2 minutes, ton site est en ligne sur une adresse du type `https://xxxx.netlify.app`.
-   Dans **« Site configuration » → « Change site name »**, renomme-la par exemple en `valg-studio` →
-   `https://valg-studio.netlify.app`.
-5. Ensuite, le site se met à jour quand un envoi contient le mot « publier » (voir « Publier le site »).
+Réglages du projet Cloudflare (déjà faits, pour mémoire) : commande de construction `npm run build`, commande de
+mise en ligne `npx wrangler deploy` (elle lit le fichier `wrangler.jsonc`), branche de production
+`claude/photographer-portfolio-prompt-4hvfhi`.
 
 ### Ton propre nom de domaine (environ 10 € par an)
 
-Achète par exemple `valg-studio.fr` (chez OVH, Gandi, ou directement dans Netlify : « Domain management » →
-« Add a domain »), puis suis les indications de Netlify pour le relier. L'adresse du site, du plan du site et des
-liens de partage se met à jour automatiquement.
+Comme le site est chez Cloudflare, le domaine doit être géré par Cloudflare :
+
+1. Achète le domaine (ex. `valgstudio.fr`) chez OVH ou Gandi, **sans aucune option** (pas d'hébergement).
+2. Dans Cloudflare : **Domains** → **Add a domain** → tape ton domaine → offre **Free**. Cloudflare te donne
+   2 « serveurs de noms » (nameservers).
+3. Chez OVH : ton domaine → **Serveurs DNS** → **Modifier** → remplace par les 2 serveurs de Cloudflare.
+4. Une fois le domaine actif dans Cloudflare (quelques heures) : **Workers & Pages** → **valg-studio** →
+   **Settings** → **Domains & Routes** → **Add** → **Custom domain** → tape ton domaine.
+5. Demande ensuite à Claude de mettre la nouvelle adresse comme adresse officielle du site.

@@ -34,5 +34,5 @@ export const SITE = {
     siret: '', // à ajouter dès que tu l'as reçu
     adresse: '', // adresse professionnelle (ou domiciliation)
   },
-  hebergeur: 'Netlify, Inc. — 512 2nd Street, Suite 200, San Francisco, CA 94107, États-Unis — www.netlify.com',
+  hebergeur: 'Cloudflare, Inc. — 101 Townsend Street, San Francisco, CA 94107, États-Unis — www.cloudflare.com',
 };
