@@ -223,7 +223,8 @@ Le site s'ouvre sur http://localhost:4321 et se met à jour dès que tu ajoutes 
 
 ## Mise en ligne (Cloudflare, gratuit)
 
-Le site est hébergé gratuitement par **Cloudflare** : https://valg-studio.crazy-gamer50700.workers.dev
+Le site est hébergé gratuitement par **Cloudflare** : **https://valgstudiophotovideo.com**
+(adresse technique de secours : https://valg-studio.crazy-gamer50700.workers.dev)
 Les visites sont illimitées et il n'y a pas de crédits à surveiller.
 
 - **Chaque envoi sur GitHub remet le site en ligne tout seul**, en 3 à 5 minutes (le temps de préparer les photos).
@@ -237,14 +238,15 @@ Réglages du projet Cloudflare (déjà faits, pour mémoire) : commande de const
 mise en ligne `npx wrangler deploy` (elle lit le fichier `wrangler.jsonc`), branche de production
 `claude/photographer-portfolio-prompt-4hvfhi`.
 
-### Ton propre nom de domaine (environ 10 € par an)
+### Le nom de domaine valgstudiophotovideo.com
 
+Pense à renouveler le domaine chaque année (active le renouvellement automatique chez le vendeur).
 Comme le site est chez Cloudflare, le domaine doit être géré par Cloudflare :
 
-1. Achète le domaine (ex. `valgstudio.fr`) chez OVH ou Gandi, **sans aucune option** (pas d'hébergement).
+1. Domaine acheté chez Cloudflare : passe directement à l'étape 4. Acheté ailleurs (OVH, Gandi…) : étapes 2 à 4.
 2. Dans Cloudflare : **Domains** → **Add a domain** → tape ton domaine → offre **Free**. Cloudflare te donne
    2 « serveurs de noms » (nameservers).
 3. Chez OVH : ton domaine → **Serveurs DNS** → **Modifier** → remplace par les 2 serveurs de Cloudflare.
 4. Une fois le domaine actif dans Cloudflare (quelques heures) : **Workers & Pages** → **valg-studio** →
-   **Settings** → **Domains & Routes** → **Add** → **Custom domain** → tape ton domaine.
-5. Demande ensuite à Claude de mettre la nouvelle adresse comme adresse officielle du site.
+   **Settings** → **Domains & Routes** → **Add** → **Custom domain** → `valgstudiophotovideo.com`, puis recommence
+   avec `www.valgstudiophotovideo.com`.

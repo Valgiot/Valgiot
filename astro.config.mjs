@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   // Adresse officielle du site (liens pour Google, plan du site, aperçus de partage).
-  // À remplacer par le nom de domaine quand il sera relié (ou via la variable SITE_URL).
-  site: process.env.SITE_URL ?? 'https://valg-studio.crazy-gamer50700.workers.dev',
+  // Nom de domaine du site (la variable SITE_URL peut le remplacer sans toucher au code).
+  site: process.env.SITE_URL ?? 'https://valgstudiophotovideo.com',
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',
