@@ -5,5 +5,12 @@
   "compatibility_date": "2025-09-01",
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // Nom de domaine branché automatiquement à chaque mise en ligne (le domaine est géré par Cloudflare).
+  "routes": [
+    { "pattern": "valgstudiophotovideo.com", "custom_domain": true },
+    { "pattern": "www.valgstudiophotovideo.com", "custom_domain": true }
+  ],
+  // Garde aussi l'adresse de secours valg-studio.crazy-gamer50700.workers.dev.
+  "workers_dev": true
 }

@@ -247,6 +247,5 @@ Comme le site est chez Cloudflare, le domaine doit être géré par Cloudflare :
 2. Dans Cloudflare : **Domains** → **Add a domain** → tape ton domaine → offre **Free**. Cloudflare te donne
    2 « serveurs de noms » (nameservers).
 3. Chez OVH : ton domaine → **Serveurs DNS** → **Modifier** → remplace par les 2 serveurs de Cloudflare.
-4. Une fois le domaine actif dans Cloudflare (quelques heures) : **Workers & Pages** → **valg-studio** →
-   **Settings** → **Domains & Routes** → **Add** → **Custom domain** → `valgstudiophotovideo.com`, puis recommence
-   avec `www.valgstudiophotovideo.com`.
+4. Une fois le domaine actif dans Cloudflare, rien à faire : le fichier `wrangler.jsonc` branche
+   `valgstudiophotovideo.com` et `www.valgstudiophotovideo.com` sur le site à chaque mise en ligne.
