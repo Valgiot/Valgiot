@@ -1,0 +1,9 @@
+// Réglages Cloudflare (Workers) : le site est entièrement statique, Cloudflare sert le dossier dist
+// produit par `npm run build`. Le nom doit rester celui du projet Cloudflare.
+{
+  "name": "valg-studio",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
