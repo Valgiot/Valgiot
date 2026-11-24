@@ -1,7 +1,7 @@
 ---
 // Bandeau « À propos » de l'accueil : une phrase géante dont les mots s'allument au défilement, et un cadre
 // où les photos se succèdent en rafale (un coup d'obturateur à chaque image). Il donne envie de lire le récit
-// de la page /v2/a-propos/. Autonome : son style et son script sont dans ce fichier.
+// de la page /a-propos/. Autonome : son style et son script sont dans ce fichier.
 // Pour le poser sur une page : <BandeauAPropos />
 import { Image } from 'astro:assets';
 import Bouton from './Bouton.astro';
@@ -59,7 +59,7 @@ const mots = (t: string) => t.split(' ');
           rafale.map(({ p, image, rang }, i) => (
             <a
               class:list={['bap__vue', { 'est-la': i === 0 }]}
-              href={`/v2/projet/${p.id}/#photo-${rang}`}
+              href={`/projet/${p.id}/#photo-${rang}`}
               data-bap-vue
               data-vers-projet
               data-cadre
@@ -86,14 +86,14 @@ const mots = (t: string) => t.split(' ');
         {
           TEMPS.map(([ancre, nom], i) => (
             <li>
-              <a href={`/v2/a-propos/#${ancre}`}>
+              <a href={`/a-propos/#${ancre}`}>
                 <span>{deuxChiffres(i + 1)}</span> {nom}
               </a>
             </li>
           ))
         }
       </ol>
-      <Bouton texte="Lire le récit" href="/v2/a-propos/" plein />
+      <Bouton texte="Lire le récit" href="/a-propos/" plein />
     </div>
   </div>
 </section>

@@ -3,11 +3,17 @@
 Tout le contenu du site se trouve dans le dossier **`src/photos/`**. Tu n'as jamais besoin de toucher au code :
 le site lit ce dossier et construit les pages tout seul.
 
-Le site a trois niveaux :
+Le site (nouvelle version, novembre 2026) a ces pages :
 
-1. **Accueil** : un rectangle vertical par **univers** (Sport, Entreprises, Portrait, Événements, Marques).
-2. **Page d'un univers** : un carré par **sous-partie** (Football, Ski, Padel…), et/ou directement des photos.
-3. **Page d'une sous-partie** : la galerie photo (et les vidéos).
+1. **Accueil** : ton nom au milieu des photos, ta présentation (le badge), toutes les photos, l'anneau des projets,
+   les films, le contact.
+2. **Collections** (`/collection/`) : une porte par **univers** (Sport, Entreprises…), et le mur de toutes les photos.
+3. **Une collection** (`/collection/sport/`) : une porte par **projet** (= une sous-partie : Football, Ski…).
+   Un univers qui n'a qu'un projet (Portrait, Marques) mène directement à ce projet.
+4. **Un projet** (`/projet/sport-football/`) : les photos, en « Défilé » ou en « Mur », et en grand au clic.
+5. **À propos**, **Contact**, **Mentions légales**.
+
+Les anciennes adresses (`/sport/football/`…) renvoient automatiquement vers les nouvelles (fichier `public/_redirects`).
 
 ```
 src/photos/
@@ -37,7 +43,6 @@ src/photos/
 
 | Où | Lien pour ajouter des photos |
 |---|---|
-| Diaporama de l'accueil | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/accueil) |
 | Sport → Football | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/football) |
 | Sport → Ski | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/ski) |
 | Sport → Padel | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/sport/padel) |
@@ -52,29 +57,29 @@ src/photos/
 | Événements → French Dart Festival | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/evenements/french-dart-festival) |
 | Événements → Padel X Live | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/evenements/padel-x-live) |
 | Marques → Craft | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/photos/marques/craft) |
-| Logos clients | [Envoyer](https://github.com/valgiot/valgiot/upload/claude/photographer-portfolio-prompt-4hvfhi/src/clients) |
 
 Pense à exporter tes photos en 2500 px avant l'envoi (voir « Préparer ses photos » plus bas) : au-delà de 25 Mo,
 GitHub refuse le fichier. Pour **remplacer** une photo, envoie la nouvelle avec exactement le même nom de fichier. Les photos s'affichent dans
 l'ordre de leur nom (`01-…`, `02-…`) et la première devient la photo du carré.
 Sur téléphone, ouvre ces liens dans le navigateur (pas dans l'application GitHub).
 
-## Les photos du diaporama de l'accueil
+## Ton portrait
 
-Dossier **`src/accueil/`** : mets-y 3 à 6 photos **horizontales** (format paysage), nommées `01.jpg`, `02.jpg`…
-Elles défilent en boucle en plein écran, une toutes les 8 secondes. Le délai, le grand titre, la phrase en dessous
-et le texte du bouton se changent dans `src/site.ts` (`diaporamaSecondes`, `slogan`, `sloganSousTitre`, `boutonAccueil`).
+Dossier **`src/portrait/`** :
+- `01-badge-…jpg` : le portrait du badge sur l'accueil, en carré, visage bien centré ;
+- `02-a-propos-…jpg` : le portrait de la page À propos, en hauteur (format 4:5) ;
+- `original/` : la photo d'origine, gardée telle quelle.
 
-Le titre s'affiche dans le bas de la photo, sur un léger voile sombre : garde le sujet plutôt au centre ou en haut.
-Exporte-les en 2500 px de large minimum pour qu'elles restent nettes sur les grands écrans.
+Pour changer de portrait, remplace ces fichiers en gardant « badge » et « a-propos » dans leur nom.
 
-## Les logos "Ils m'ont fait confiance"
+## Les films
 
-Dossier **`src/clients/`** : dépose les logos de tes clients (SVG ou PNG à fond transparent de préférence).
-Le nom du fichier sert de nom du client (ex. `sm-caen.png`). Ils s'affichent en gris et prennent leur couleur au survol.
-Tant qu'il n'y a aucun logo dans ce dossier, la section n'apparaît pas sur le site.
+Dossier **`public/films/`** : chaque film est un fichier `.mp4` (compressé pour le web, 1920 px de large au plus,
+20 Mo maximum) accompagné d'une image d'attente `.jpg` du même nom. La liste des films de l'accueil est en haut de
+`src/pages/index.astro` (`FILMS`).
 
-Ne mets que des clients qui sont d'accord pour apparaître.
+(Les anciens dossiers `src/accueil/` — le diaporama — et `src/clients/` — les logos — ne sont plus utilisés.)
+
 
 ## Ajouter des photos dans une sous-partie (le plus courant)
 
@@ -104,19 +109,6 @@ Google ne la référence pas tant qu'elle est vide.
 Tout est facultatif sauf le dossier lui-même. Les carrés sont classés selon `ordre`, puis du plus récent au plus ancien
 (selon la `date`). Le `lieu` s'affiche en petit sous le nom du carré (ex. « Porticcio, Corse »).
 Pour choisir la photo du carré : `"couverture": "03-nom-de-la-photo.jpg"`. Pour cacher un carré : `"visible": false`.
-
-## Ajouter une vidéo
-
-Mets ta vidéo sur **YouTube** ou **Vimeo** (jamais directement dans le dossier), puis colle le lien dans `infos.json` :
-
-```json
-{
-  "titre": "Padel X Live",
-  "videos": ["https://vimeo.com/123456789", "https://youtu.be/abcdefghijk"]
-}
-```
-
-Les vidéos s'affichent au-dessus des photos. Une sous-partie peut ne contenir que des vidéos.
 
 ## Univers sans sous-partie (ex. Portrait)
 

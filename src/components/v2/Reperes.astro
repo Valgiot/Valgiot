@@ -17,11 +17,11 @@ const { cat, titre, total, haut } = Astro.props;
 
 // Tout ce que « Chercher » peut proposer : d'abord les collections, puis chaque projet.
 const choix = [
-  { type: 'tout', nom: 'Toutes les photos', cat: '', nb: totalPhotos, href: '/v2/collection/' },
+  { type: 'tout', nom: 'Toutes les photos', cat: '', nb: totalPhotos, href: '/collection/' },
   ...univers.map((u) => ({ type: 'collection', nom: u.titre, cat: '', nb: u.nb, href: adresseCollection(u) })),
   ...projets
     .filter((p) => p.id !== p.catSlug && (univers.find((u) => u.slug === p.catSlug)?.projets.length ?? 0) > 1)
-    .map((p) => ({ type: 'projet', nom: p.titre, cat: p.categorie, nb: p.photos.length, href: `/v2/projet/${p.id}/` })),
+    .map((p) => ({ type: 'projet', nom: p.titre, cat: p.categorie, nb: p.photos.length, href: `/projet/${p.id}/` })),
 ];
 ---
 

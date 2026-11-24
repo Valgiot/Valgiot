@@ -5,16 +5,16 @@ import { univers, totalPhotos, adresseCollection } from '../../lib/v2';
 import { SITE } from '../../site';
 
 const liens = [
-  { href: '/v2/collection/', nom: 'Photos' },
-  { href: '/v2/#films', nom: 'Films' },
-  { href: '/v2/a-propos/', nom: 'À propos' },
-  { href: '/v2/contact/', nom: 'Contact' },
+  { href: '/collection/', nom: 'Photos' },
+  { href: '/#films', nom: 'Films' },
+  { href: '/a-propos/', nom: 'À propos' },
+  { href: '/contact/', nom: 'Contact' },
 ];
 ---
 
 <header class="barre" data-barre data-ouvert="non">
   <div class="barre__rang">
-    <a class="barre__logo" href="/v2/" aria-label="VALG, retour à l'accueil">VALG</a>
+    <a class="barre__logo" href="/" aria-label="VALG, retour à l'accueil">VALG</a>
     <nav class="barre__liens" aria-label="Navigation principale">
       {
         liens.map((l) => (
@@ -35,7 +35,7 @@ const liens = [
   <div class="barre__panneau" id="panneau-menu">
     <div class="barre__cartes">
       <div class="carte-menu">
-        <h3><a href="/v2/collection/" style="text-decoration:none">Photos</a><sup>({totalPhotos})</sup></h3>
+        <h3><a href="/collection/" style="text-decoration:none">Photos</a><sup>({totalPhotos})</sup></h3>
         <ul>
           {
             univers.map((u) => (
@@ -49,11 +49,11 @@ const liens = [
           }
         </ul>
       </div>
-      <a class="carte-menu carte-menu--claire" href="/v2/#films">
+      <a class="carte-menu carte-menu--claire" href="/#films">
         <h3>Films</h3>
         <p>Bande démo et films clients, bientôt ici.</p>
       </a>
-      <a class="carte-menu carte-menu--claire" href="/v2/contact/">
+      <a class="carte-menu carte-menu--claire" href="/contact/">
         <h3>Contact</h3>
         <p>{SITE.email}<br />@{SITE.instagram.pseudo}</p>
       </a>

@@ -3,14 +3,14 @@
 // En haut, un volet par collection (Sport, Événements…) : en noir et blanc, la couleur revient autour du curseur.
 // Un clic sur un volet mène à la page de cette collection, où l'on choisit un projet.
 // En dessous, le mur calme : toutes les photos à la suite, sans effet.
-import V2 from '../../layouts/V2.astro';
-import Pied from '../../components/v2/Pied.astro';
-import Mur from '../../components/v2/Mur.astro';
-import Vue from '../../components/v2/Vue.astro';
-import Volets from '../../components/v2/Volets.astro';
-import Reperes from '../../components/v2/Reperes.astro';
-import Compteur from '../../components/v2/Compteur.astro';
-import { projets, univers, totalPhotos, deuxChiffres } from '../../lib/v2';
+import V2 from '../layouts/V2.astro';
+import Pied from '../components/v2/Pied.astro';
+import Mur from '../components/v2/Mur.astro';
+import Vue from '../components/v2/Vue.astro';
+import Volets from '../components/v2/Volets.astro';
+import Reperes from '../components/v2/Reperes.astro';
+import Compteur from '../components/v2/Compteur.astro';
+import { projets, univers, totalPhotos, deuxChiffres } from '../lib/v2';
 
 const photos = projets.flatMap((p) =>
   p.photos.map((photo, k) => ({
@@ -26,7 +26,7 @@ const photos = projets.flatMap((p) =>
 <V2 scene="papier" titre="Collections — V.A.L.G">
   <main class="page scene-papier" data-page="collection" id="haut">
     <header class="entete">
-      <a class="lien t-mono" href="/v2/">← Accueil</a>
+      <a class="lien t-mono" href="/">← Accueil</a>
       <h1 class="entete__titre t-titre" data-entree style="--lettres:11">Collections</h1>
       <div class="entete__ligne">
         <span class="t-mono">{univers.length} collections, {projets.length} projets</span>

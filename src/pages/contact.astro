@@ -1,11 +1,11 @@
 ---
 // Page Contact de la refonte : la scène de contact (la même qu'à la fin de l'accueil, voir BandeauContact.astro),
 // puis, en petit, comment ça se passe.
-import V2 from '../../layouts/V2.astro';
-import BandeauContact from '../../components/v2/BandeauContact.astro';
-import Pied from '../../components/v2/Pied.astro';
-import { SITE } from '../../site';
-import { deuxChiffres } from '../../lib/v2';
+import V2 from '../layouts/V2.astro';
+import BandeauContact from '../components/v2/BandeauContact.astro';
+import Pied from '../components/v2/Pied.astro';
+import { SITE } from '../site';
+import { deuxChiffres } from '../lib/v2';
 
 // « Photographe & vidéaste à Caen » en milieu de phrase : seule la première lettre perd sa majuscule.
 const metier = SITE.accroche.charAt(0).toLowerCase() + SITE.accroche.slice(1);

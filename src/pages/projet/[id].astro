@@ -4,12 +4,13 @@
 // 2. le mur — toutes les photos posées côte à côte, sans effet, pour admirer au calme.
 // Le titre, le compteur et le choix de vue ne bougent pas d'une vue à l'autre : seules les photos changent de place, en volant.
 import { Image } from 'astro:assets';
-import V2 from '../../../layouts/V2.astro';
-import Pied from '../../../components/v2/Pied.astro';
-import Mur from '../../../components/v2/Mur.astro';
-import Vue from '../../../components/v2/Vue.astro';
-import Compteur from '../../../components/v2/Compteur.astro';
-import { projets, univers, deuxChiffres, type Projet } from '../../../lib/v2';
+import V2 from '../../layouts/V2.astro';
+import Pied from '../../components/v2/Pied.astro';
+import Mur from '../../components/v2/Mur.astro';
+import Vue from '../../components/v2/Vue.astro';
+import Compteur from '../../components/v2/Compteur.astro';
+import { SITE } from '../../site';
+import { projets, univers, deuxChiffres, type Projet } from '../../lib/v2';
 
 export function getStaticPaths() {
   return projets.map((projet, i) => ({
@@ -32,14 +33,14 @@ const photos = projet.photos.map((photo, k) => ({
 }));
 // Le lien de retour ramène à la collection du projet (ou à la liste des collections quand le projet est seul dans la sienne).
 const collection = univers.find((u) => u.slug === projet.catSlug);
-const retour = collection && collection.projets.length > 1 ? { href: `/v2/collection/${collection.slug}/`, nom: collection.titre } : { href: '/v2/collection/', nom: 'Collections' };
+const retour = collection && collection.projets.length > 1 ? { href: `/collection/${collection.slug}/`, nom: collection.titre } : { href: '/collection/', nom: 'Collections' };
 const choix = [
   { vue: 'defile', nom: 'Défilé' },
   { vue: 'mur', nom: 'Mur' },
 ];
 ---
 
-<V2 scene="nuit" titre={`${projet.titre} — V.A.L.G`}>
+<V2 scene="nuit" titre={`${projet.titre} — V.A.L.G`} description={`${projet.titre} (${projet.categorie}) : ${nb} photos de ${SITE.nom}, ${SITE.accroche.charAt(0).toLowerCase()}${SITE.accroche.slice(1)}.`} image={projet.couverture}>
   <main class="page scene-nuit" data-page="projet" data-vue="defile">
     <!-- Vue 1 : le défilé -->
     <section class="defile" data-defile aria-label={`Photos — ${projet.titre}`}>
@@ -95,7 +96,7 @@ const choix = [
       </div>
     </div>
 
-    <a class="suite" href={`/v2/projet/${suivant.id}/`}>
+    <a class="suite" href={`/projet/${suivant.id}/`}>
       <span class="t-mono" style="color:var(--doux)">Projet suivant · ({suivant.categorie})</span>
       <strong class="t-titre">{suivant.titre}</strong>
     </a>

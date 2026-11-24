@@ -3,14 +3,14 @@
 // En haut, un volet par projet de la collection ; en dessous, le mur calme de toutes ses photos.
 // (Une collection qui n'a qu'un seul projet n'a pas de page ici : son volet mène directement au projet.)
 import { Image } from 'astro:assets';
-import V2 from '../../../layouts/V2.astro';
-import Pied from '../../../components/v2/Pied.astro';
-import Mur from '../../../components/v2/Mur.astro';
-import Vue from '../../../components/v2/Vue.astro';
-import Volets from '../../../components/v2/Volets.astro';
-import Reperes from '../../../components/v2/Reperes.astro';
-import Compteur from '../../../components/v2/Compteur.astro';
-import { univers, deuxChiffres, adresseCollection } from '../../../lib/v2';
+import V2 from '../../layouts/V2.astro';
+import Pied from '../../components/v2/Pied.astro';
+import Mur from '../../components/v2/Mur.astro';
+import Vue from '../../components/v2/Vue.astro';
+import Volets from '../../components/v2/Volets.astro';
+import Reperes from '../../components/v2/Reperes.astro';
+import Compteur from '../../components/v2/Compteur.astro';
+import { univers, deuxChiffres, adresseCollection } from '../../lib/v2';
 
 export function getStaticPaths() {
   return univers.filter((u) => u.projets.length > 1).map((u) => ({ params: { cat: u.slug } }));
@@ -20,7 +20,7 @@ const u = univers.find((x) => x.slug === Astro.params.cat)!;
 const suivante = univers[(univers.indexOf(u) + 1) % univers.length];
 // Le plus long mot du titre règle la taille des lettres, pour qu'aucun mot ne soit coupé.
 const lettres = Math.max(...u.titre.split(/\s+/).map((mot) => mot.length));
-const portes = u.projets.map((p) => ({ href: `/v2/projet/${p.id}/`, titre: p.titre, nb: p.photos.length, image: p.couverture }));
+const portes = u.projets.map((p) => ({ href: `/projet/${p.id}/`, titre: p.titre, nb: p.photos.length, image: p.couverture }));
 const photos = u.projets.flatMap((p) =>
   p.photos.map((photo, k) => ({
     photo,
@@ -32,10 +32,10 @@ const photos = u.projets.flatMap((p) =>
 );
 ---
 
-<V2 scene="papier" titre={u.titreSeo ? `${u.titreSeo} — V.A.L.G` : `${u.titre} — V.A.L.G`} description={u.descriptionSeo ?? u.description}>
+<V2 scene="papier" titre={u.titreSeo ? `${u.titreSeo} — V.A.L.G` : `${u.titre} — V.A.L.G`} description={u.descriptionSeo ?? u.description} image={u.couverture}>
   <main class="page scene-papier" data-page="collection" id="haut">
     <header class="entete">
-      <a class="lien t-mono" href="/v2/collection/">← Toutes les collections</a>
+      <a class="lien t-mono" href="/collection/">← Toutes les collections</a>
       <h1 class="entete__titre t-titre" data-entree style={`--lettres:${lettres}`}>{u.titre}</h1>
       <div class="entete__ligne">
         <span class="t-mono">{u.projets.length} projets</span>

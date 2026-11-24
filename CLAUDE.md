@@ -1,6 +1,9 @@
 # Site V.A.L.G (portfolio photo, Astro)
 
-- Le contenu est dans `src/photos/` (univers → sous-parties → photos), `src/accueil/` (diaporama) et `src/clients/`.
+- Le contenu est dans `src/photos/` (univers → sous-parties → photos), `src/portrait/` (portrait de Valentin) et
+  `public/films/` (films de l'accueil). Le site est la refonte de novembre 2026 (pages dans `src/pages/`, composants
+  `src/components/v2/`, styles `src/styles/v2*.css`, scripts `src/scripts/v2/`). Les anciennes adresses sont redirigées
+  par `public/_redirects`.
   Le fonctionnement pour le photographe est décrit dans `GUIDE.md`, en français : garder ce guide à jour.
 - **Hébergement Cloudflare Workers** (assets statiques, `wrangler.jsonc` → `dist`) : chaque push sur la branche
   `claude/photographer-portfolio-prompt-4hvfhi` construit et met en ligne le site (une construction à la fois,

@@ -1,12 +1,16 @@
 ---
-// Gabarit de la refonte (v2). Les pages vivent sous /v2/ tant que le nouveau design n'est pas validé.
+// Gabarit du site : en-tête (titre, description et aperçus pour Google et les réseaux), barre, curseur, scripts.
 import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
 import '@fontsource-variable/instrument-sans';
 import '@fontsource-variable/geist-mono';
 import '../styles/v2.css';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Barre from '../components/v2/Barre.astro';
+import { SITE } from '../site';
+import { projets } from '../lib/v2';
 
 interface Props {
   titre?: string;
@@ -14,8 +18,40 @@ interface Props {
   description?: string;
   /** « papier » pour naviguer, « nuit » pour regarder. */
   scene?: 'papier' | 'nuit';
+  /** Photo montrée quand on partage le lien (WhatsApp, Instagram, Messenger…). Par défaut : la couverture du premier projet. */
+  image?: ImageMetadata;
+  /** Page à ne pas montrer dans Google (page d'erreur). */
+  noindex?: boolean;
 }
-const { titre = 'V.A.L.G — Photo & vidéo, Caen', description, scene = 'papier' } = Astro.props;
+const {
+  titre = `${SITE.accroche}, ${SITE.region} — ${SITE.nom}`,
+  description = SITE.description,
+  scene = 'papier',
+  image = projets[0]?.couverture,
+  noindex = false,
+} = Astro.props;
+const canonique = new URL(Astro.url.pathname, Astro.site);
+const apercu = image ? new URL((await getImage({ src: image, width: 1200, format: 'jpg', quality: 80 })).src, Astro.site) : undefined;
+
+// Fiche d'identité lue par Google (activité, zone, contact, Instagram), sur la page d'accueil.
+const accueil = Astro.url.pathname === '/';
+const fiche = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: SITE.nom,
+  description: SITE.description,
+  url: Astro.site?.href,
+  email: SITE.email,
+  image: apercu?.href,
+  address: { '@type': 'PostalAddress', addressLocality: SITE.ville, addressRegion: SITE.region, addressCountry: 'FR' },
+  areaServed: [
+    { '@type': 'City', name: SITE.ville },
+    { '@type': 'AdministrativeArea', name: SITE.region },
+    { '@type': 'Country', name: 'France' },
+  ],
+  knowsAbout: SITE.domaines,
+  sameAs: [SITE.instagram.url],
+};
 ---
 
 <!doctype html>
@@ -24,9 +60,20 @@ const { titre = 'V.A.L.G — Photo & vidéo, Caen', description, scene = 'papier
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{titre}</title>
-    {description && <meta name="description" content={description} />}
-    <meta name="robots" content="noindex" />
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonique} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content={scene === 'nuit' ? '#0b0b0b' : '#efede6'} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content={SITE.nom} />
+    <meta property="og:title" content={titre} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonique} />
+    {apercu && <meta property="og:image" content={apercu} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    {accueil && <script type="application/ld+json" set:html={JSON.stringify(fiche).replace(/</g, '\\u003c')} />}
     <script is:inline>
       // Retour depuis un projet : la page papier renaît du noir (voir « explosion » dans site.ts).
       try {

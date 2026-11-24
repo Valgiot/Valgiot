@@ -7,13 +7,13 @@
 // categorie.json. Les passages à remplacer par l'histoire vraie de Valentin sont marqués « À VALIDER ».
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import V2 from '../../layouts/V2.astro';
-import Pied from '../../components/v2/Pied.astro';
-import Bouton from '../../components/v2/Bouton.astro';
-import Compteur from '../../components/v2/Compteur.astro';
-import { SITE } from '../../site';
-import { projets, univers, totalPhotos, deuxChiffres } from '../../lib/v2';
-import '../../styles/v2-apropos.css';
+import V2 from '../layouts/V2.astro';
+import Pied from '../components/v2/Pied.astro';
+import Bouton from '../components/v2/Bouton.astro';
+import Compteur from '../components/v2/Compteur.astro';
+import { SITE } from '../site';
+import { projets, univers, totalPhotos, deuxChiffres } from '../lib/v2';
+import '../styles/v2-apropos.css';
 
 // Le portrait de Valentin : les photos déposées dans src/portrait/ (celle dont le nom contient « a-propos », sinon la première).
 const portraits = import.meta.glob<{ default: ImageMetadata }>('/src/portrait/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true });
@@ -29,7 +29,7 @@ const vue = (id: string, debut: string) => {
     p,
     image: ph?.image ?? p.couverture,
     rang,
-    href: `/v2/projet/${p.id}/#photo-${rang}`,
+    href: `/projet/${p.id}/#photo-${rang}`,
     legende: `${p.titre} · ${deuxChiffres(rang)} / ${p.photos.length}`,
   };
 };
@@ -275,8 +275,8 @@ const metier = SITE.accroche.charAt(0).toLowerCase() + SITE.accroche.slice(1);
       <h2 class="ap-fin__mot t-titre" id="ap-t8" data-revele>Le prochain instant,<br /><span class="t-ital">c'est le vôtre&nbsp;?</span></h2>
       <p class="ap-fin__texte">Un match, une soirée, une table, une marque&nbsp;: dites-moi ce que vous préparez.</p>
       <div class="rangee">
-        <Bouton texte="Me contacter" href="/v2/contact/" plein />
-        <Bouton texte="Voir les collections" href="/v2/collection/" />
+        <Bouton texte="Me contacter" href="/contact/" plein />
+        <Bouton texte="Voir les collections" href="/collection/" />
       </div>
     </section>
 
@@ -284,6 +284,6 @@ const metier = SITE.accroche.charAt(0).toLowerCase() + SITE.accroche.slice(1);
 
   </main>
   <script>
-    import '../../scripts/v2/apropos.ts';
+    import '../scripts/v2/apropos.ts';
   </script>
 </V2>

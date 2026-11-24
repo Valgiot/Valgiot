@@ -1,393 +1,151 @@
 ---
-import type { ImageMetadata } from 'astro';
-import { Image, getImage } from 'astro:assets';
-import Base from '../layouts/Base.astro';
-import Carte from '../components/Carte.astro';
-import Grille from '../components/Grille.astro';
-import { categories } from '../lib/photos';
+// Accueil de la refonte : un récit au défilement.
+// 1. Le ciel (le nom et les photos en profondeur)  2. Le manifeste  (3. le paquet de projets vedettes a été retiré)
+// 4. Le passage (toutes les photos nous frôlent)  5. L'anneau de tous les projets  6. Les références  7. Le contact
+import { Image } from 'astro:assets';
+import V2 from '../layouts/V2.astro';
+import Pied from '../components/v2/Pied.astro';
+import Anneau from '../components/v2/Anneau.astro';
+import Bouton from '../components/v2/Bouton.astro';
+import Compteur from '../components/v2/Compteur.astro';
+import Vue from '../components/v2/Vue.astro';
+import Presentation from '../components/v2/Presentation.astro';
+import BandeauContact from '../components/v2/BandeauContact.astro';
 import { SITE } from '../site';
+import { totalPhotos, projets, alea, deuxChiffres } from '../lib/v2';
 
-// Diaporama : toutes les photos du dossier src/accueil, dans l'ordre de leur nom.
-const diapos = Object.entries(
-  import.meta.glob<ImageMetadata>('/src/accueil/*.{jpg,jpeg,png,webp,avif,JPG,JPEG,PNG,WEBP,AVIF}', {
-    eager: true,
-    import: 'default',
-  }),
-)
-  .sort(([a], [b]) => a.localeCompare(b, 'fr', { numeric: true }))
-  .map(([, image]) => image);
+// Acte 1 — place de chaque photo : x et y en % de l'écran, largeur en vw, profondeur (plus c'est grand, plus ça bouge).
+const CIEL = [
+  { x: 4, y: 11, w: 13, d: 1.2, z: 1 },
+  { x: 25, y: 5, w: 8, d: 0.5, z: 1 },
+  { x: 45, y: 8, w: 10, d: 0.8, z: 3 },
+  { x: 66, y: 4, w: 8, d: 0.4, z: 1 },
+  { x: 82, y: 13, w: 12, d: 1.3, z: 3 },
+  { x: 1, y: 54, w: 9, d: 0.7, z: 1 },
+  { x: 89, y: 52, w: 8, d: 0.6, z: 1 },
+  { x: 13, y: 73, w: 11, d: 1.0, z: 3 },
+  { x: 32, y: 80, w: 8, d: 0.5, z: 1 },
+  { x: 52, y: 74, w: 12, d: 1.4, z: 3 },
+  { x: 73, y: 80, w: 9, d: 0.8, z: 1 },
+];
+const ciel = projets.slice(0, CIEL.length).map((p, i) => ({ p, ...CIEL[i] }));
 
-// Image affichée quand le lien du site est partagé (WhatsApp, réseaux…) : la première photo du diaporama.
-const partage = diapos[0] ? (await getImage({ src: diapos[0], width: 1200, format: 'jpg' })).src : undefined;
+// Films — les deux premiers films de Valentin, convertis pour le web dans public/films/ (fichier .mp4 + image d'attente .jpg).
+// Le premier est en largeur : il s'ouvre en plein écran. Le second est en hauteur : il vient se poser au centre.
+const FILMS = [
+  { titre: 'Padel', src: '/films/padel.mp4', affiche: '/films/padel.jpg' },
+  { titre: 'Cyclisme', src: '/films/cyclisme.mp4', affiche: '/films/cyclisme.jpg' },
+];
 
-// Logos clients : toutes les images du dossier src/clients. Le nom du fichier sert de nom du client.
-const clients = Object.entries(
-  import.meta.glob<ImageMetadata>('/src/clients/*.{svg,png,jpg,jpeg,webp,SVG,PNG,JPG,JPEG,WEBP}', {
-    eager: true,
-    import: 'default',
-  }),
-)
-  .sort(([a], [b]) => a.localeCompare(b, 'fr', { numeric: true }))
-  .map(([chemin, image]) => ({
-    image,
-    nom: chemin
-      .split('/')
-      .pop()!
-      .replace(/\.[^.]+$/, '')
-      .replace(/[-_]+/g, ' '),
-  }));
+// Acte 4 — 30 photos, en piochant à tour de rôle dans chaque projet pour que deux voisines ne se ressemblent pas.
+const grains = [1, 2, 3].flatMap((rang) => projets.flatMap((p) => (p.photos[rang] ? [{ photo: p.photos[rang], p, rang }] : []))).slice(0, 30);
 ---
 
-<Base transparent image={partage}>
-  <section class="hero" aria-label="Présentation">
-    <div class="hero__diapos" data-secondes={SITE.diaporamaSecondes}>
+<V2 scene="papier">
+  <main class="page scene-papier" data-page="accueil">
+    <!-- Acte 1 -->
+    <section class="ciel" data-ciel aria-label="Présentation">
       {
-        diapos.map((image, i) => (
-          <Image
-            src={image}
-            alt=""
-            widths={[800, 1280, 1920, 2500]}
-            quality={90}
-            sizes="(max-aspect-ratio: 16/9) 178vh, 100vw"
-            loading={i === 0 ? 'eager' : 'lazy'}
-            fetchpriority={i === 0 ? 'high' : 'auto'}
-            class:list={['hero__diapo', { 'est-active': i === 0 }]}
-          />
+        ciel.map(({ p, x, y, w, d, z }, i) => (
+          <a
+            class="ciel__photo"
+            href={`/projet/${p.id}/`}
+            data-vers-projet
+            data-cadre
+            data-legende={`${p.titre} · ${p.photos.length} photos`}
+            aria-label={`${p.titre}, ${p.photos.length} photos`}
+            style={`--x:${x};--y:${y};--w:${w};--d:${d};--z:${z};--dur:${(7 + 2 * alea(i, 9)).toFixed(1)}s;--del:${(-3 * (alea(i, 10) + 1)).toFixed(1)}s`}
+          >
+            <Image src={p.couverture} alt="" widths={[200, 360, 560]} sizes={`${Math.round(w * 1.4)}vw`} quality={78} loading="eager" draggable="false" />
+          </a>
         ))
       }
-    </div>
-    <div class="hero__texte">
-      <p class="hero__slogan">{SITE.slogan}</p>
-      <h1>{SITE.sloganSousTitre}</h1>
-      <a class="bouton" href="#explorer">{SITE.boutonAccueil}</a>
-    </div>
-    {
-      diapos.length > 1 && (
-        <div class="hero__points" aria-hidden="true">
-          {diapos.map((_, i) => (
-            <span class:list={{ 'est-active': i === 0 }} />
-          ))}
-        </div>
-      )
-    }
-  </section>
-
-  <div class="contenu">
-    <section id="explorer" class="section conteneur" aria-labelledby="titre-explorer">
-      <header class="section__entete">
-        <h2 id="titre-explorer">Explorez</h2>
-        <p>Par univers</p>
-      </header>
-      <p class="presentation">{SITE.presentation}</p>
-      <Grille nb={categories.length} colonnesMax={5} largeurMax={300} label="Univers">
-        {
-          categories.map((c) => (
-            <li>
-              <Carte href={`/${c.slug}/`} titre={c.titre} image={c.couverture} />
-            </li>
-          ))
-        }
-      </Grille>
-    </section>
-
-    {
-      clients.length > 0 && (
-        <section class="section section--clients" aria-labelledby="titre-clients">
-          <div class="conteneur">
-            <header class="section__entete">
-              <h2 id="titre-clients">Ils m'ont fait confiance</h2>
-            </header>
-            <ul class="logos">
-              {clients.map((c) => (
-                <li>
-                  <Image src={c.image} alt={c.nom} width={240} class="logo-client" />
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      )
-    }
-
-    <section id="contact" class="contact" aria-labelledby="titre-contact">
-      <div class="conteneur contact__contenu">
-        <header class="section__entete">
-          <h2 id="titre-contact">Un projet ? Parlons-en.</h2>
-          <p>Basé à {SITE.ville}. {SITE.zone}</p>
-        </header>
-        <div class="contact__actions">
-          <a class="bouton bouton--plein" href={`mailto:${SITE.email}`}>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z M3 6l9 7 9-7"></path></svg>
-            {SITE.email}
-          </a>
-          <a class="bouton bouton--contour" href={SITE.instagram.url} target="_blank" rel="me noopener">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="3" y="3" width="18" height="18" rx="5"></rect>
-              <circle cx="12" cy="12" r="4"></circle>
-              <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor"></circle>
-            </svg>
-            Suivre @{SITE.instagram.pseudo}
-          </a>
-        </div>
+      <div class="ciel__centre">
+        <h1 class="ciel__nom t-titre" data-nom>VALG</h1>
+        <p class="ciel__sous t-ital">Photographe &amp; vidéaste — Caen, Normandie</p>
+      </div>
+      <!-- Le même nom, posé une seconde fois par-dessus les photos. Au défilement, cette copie se dissout :
+           on a l'impression que le nom s'enfonce derrière les photos, sans à-coup. -->
+      <div class="ciel__centre ciel__centre--devant" aria-hidden="true" data-nom-devant>
+        <div class="ciel__nom t-titre" data-nom>VALG</div>
+        <p class="ciel__sous t-ital">Photographe &amp; vidéaste — Caen, Normandie</p>
       </div>
     </section>
-  </div>
-</Base>
 
-<script>
-  const conteneur = document.querySelector<HTMLElement>('.hero__diapos');
-  const diapos = [...document.querySelectorAll<HTMLElement>('.hero__diapo')];
-  const points = [...document.querySelectorAll<HTMLElement>('.hero__points span')];
-  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (conteneur && diapos.length > 1 && !calme) {
-    let courante = 0;
-    setInterval(
-      () => {
-        if (document.hidden) return;
-        diapos[courante].classList.remove('est-active');
-        points[courante]?.classList.remove('est-active');
-        courante = (courante + 1) % diapos.length;
-        diapos[courante].classList.add('est-active');
-        points[courante]?.classList.add('est-active');
-      },
-      Number(conteneur.dataset.secondes || 8) * 1000,
-    );
-  }
-</script>
+    <!-- Acte 2 : Valentin se présente. (L'ancien bandeau « À propos » existe toujours : components/v2/BandeauAPropos.astro.) -->
+    <Presentation />
 
-<style>
-  /* --- Diaporama plein écran : il reste en place, la page glisse par-dessus. --- */
-  .hero {
-    position: sticky;
-    top: 0;
-    z-index: 0;
-    height: 100svh;
-    min-height: 480px;
-    overflow: hidden;
-    display: grid;
-    place-items: end center;
-    color: #fff;
-    background: var(--ocean);
-  }
-  .hero__diapos {
-    position: absolute;
-    inset: 0;
-  }
-  .hero__diapos::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    /* Voile sombre en bas pour que le texte reste lisible, même sur une photo claire. */
-    background: linear-gradient(to top, rgb(6 20 32 / 0.72), rgb(6 20 32 / 0.35) 40%, rgb(6 20 32 / 0.05) 70%);
-  }
-  /* Sur un écran en hauteur (téléphone), la photo est recadrée : elle est affichée plus large que l'écran,
-     d'où le "178vh" (16/9 de la hauteur) dans l'attribut sizes, pour charger une version assez grande. */
-  .hero__diapo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    transform: scale(1.06);
-    transition:
-      opacity 1.6s ease,
-      transform 10s linear;
-  }
-  .hero__diapo.est-active {
-    opacity: 1;
-    transform: scale(1);
-  }
-  .hero__texte {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    justify-items: center;
-    gap: 18px;
-    padding: 0 var(--marge) clamp(72px, 13vh, 140px);
-    text-align: center;
-    text-shadow: 0 2px 24px rgb(0 0 0 / 0.4);
-  }
-  .hero__slogan {
-    margin: 0;
-    line-height: 1.15;
-    font-size: clamp(2.4rem, 7vw, 5.2rem);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-  }
-  .hero h1 {
-    margin: 0;
-    font-size: clamp(0.85rem, 1.6vw, 1.05rem);
-    font-weight: 500;
-    letter-spacing: 0.12em;
-  }
-  .hero__points {
-    position: absolute;
-    bottom: 28px;
-    display: flex;
-    gap: 8px;
-  }
-  .hero__points span {
-    width: 24px;
-    height: 2px;
-    background: rgb(255 255 255 / 0.4);
-    transition: background-color 0.6s;
-  }
-  .hero__points span.est-active {
-    background: #fff;
-  }
+    <!-- Acte 4 -->
+    <section class="nuage" data-nuage aria-label="Toutes les photos">
+      {
+        grains.map(({ photo, p, rang }) => (
+          <a
+            class="nuage__grain"
+            href={`/projet/${p.id}/#photo-${rang + 1}`}
+            data-vers-projet
+            data-cadre
+            data-ar={(photo.image.width / photo.image.height).toFixed(3)}
+            data-legende={`${p.titre} · ${deuxChiffres(rang + 1)} / ${p.photos.length}`}
+            aria-label={`${p.titre}, photo ${rang + 1} sur ${p.photos.length}`}
+            tabindex="-1"
+          >
+            <Image src={photo.image} alt="" widths={[400, 800]} sizes="(max-width: 720px) 70vw, 32vw" quality={78} loading="eager" draggable="false" />
+          </a>
+        ))
+      }
+      <div class="nuage__titre">
+        <span class="t-ital">({totalPhotos} photos)</span>
+        <strong class="t-titre">{projets.length} projets</strong>
+      </div>
+    </section>
 
-  .bouton {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 18px;
-    padding: 16px 32px;
-    border-radius: 999px;
-    background: #fff;
-    color: var(--texte);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    text-decoration: none;
-    text-shadow: none;
-    box-shadow: 0 8px 30px rgb(0 0 0 / 0.18);
-    transition:
-      transform 0.25s,
-      box-shadow 0.25s,
-      background-color 0.25s,
-      color 0.25s;
-  }
-  .bouton:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 36px rgb(0 0 0 / 0.25);
-  }
+    <!-- Acte 5 -->
+    <Anneau />
 
-  /* --- Contenu qui recouvre le diaporama --- */
-  .contenu {
-    position: relative;
-    z-index: 1;
-    background: var(--fond);
-  }
-  .section {
-    padding-block: clamp(64px, 10vw, 128px);
-  }
-  /* Laisse la place du menu quand on arrive par les liens "Portfolio" / "Contact". */
-  #explorer,
-  #contact {
-    scroll-margin-top: 24px;
-  }
-  .section__entete {
-    text-align: center;
-    margin-bottom: clamp(32px, 5vw, 56px);
-  }
-  .section__entete h2 {
-    font-size: clamp(2rem, 5vw, 3.4rem);
-    font-weight: 400;
-  }
-  .section__entete p {
-    margin: 10px 0 0;
-    color: var(--texte-doux);
-    font-size: clamp(1rem, 1.8vw, 1.25rem);
-  }
+    <!-- Acte 6 -->
+    <section class="refs" id="references" aria-label="Références">
+      <div class="refs__txt">
+        <p data-lit>Clubs, marques, restaurants, événements : je travaille avec ceux qui ont quelque chose à montrer.</p>
+        <p data-lit>Devant mon objectif : SM Caen, Abeille Assurances, Craft, le French Darts Festival, Le Club Porticcio.</p>
+      </div>
+    </section>
 
-  .presentation {
-    max-width: 62ch;
-    margin: calc(clamp(32px, 5vw, 56px) * -0.5) auto clamp(32px, 5vw, 56px);
-    text-align: center;
-    color: var(--texte-doux);
-  }
+    <!-- Films : un petit écran au milieu de la page, qui s'ouvre jusqu'à remplir la fenêtre pendant que la salle s'éteint -->
+    <section class="films" id="films" data-films aria-label="Films">
+      <div class="films__noir" aria-hidden="true"></div>
+      <!-- Film 1, en largeur : une fenêtre 16/9 qui s'ouvre jusqu'au plein écran -->
+      <div class="films__ecran" data-ecran>
+        <video class="films__video" data-film data-titre={FILMS[0].titre} src={FILMS[0].src} poster={FILMS[0].affiche} muted playsinline loop preload="metadata"></video>
+        <div class="films__voile"></div>
+      </div>
+      <!-- Film 2, en hauteur : il arrive par la droite et prend le centre -->
+      <div class="films__haute">
+        <video class="films__video" data-film data-titre={FILMS[1].titre} src={FILMS[1].src} poster={FILMS[1].affiche} muted playsinline loop preload="none"></video>
+      </div>
+      <p class="films__mot t-titre" data-films-mot aria-hidden="true">Films</p>
+      <div class="films__viseur" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="films__haut t-mono" aria-hidden="true">
+        <span><b class="films__rec"></b>V.A.L.G · films</span>
+        <span data-tc>00:00:00:00</span>
+      </div>
+      <div class="films__bas">
+        <div class="films__nom">
+          <span class="t-ital" data-film-num>(Film 01)</span>
+          <h2 class="films__titre t-titre" data-film-titre>{FILMS[0].titre}</h2>
+        </div>
+        <div class="films__cote">
+          <Compteur valeur={1} total={FILMS.length} data-film-rang />
+          <button type="button" class="films__son t-mono" data-son aria-pressed="false">Son coupé</button>
+          <button type="button" class="films__son t-mono" data-vue-films="0">Plein écran</button>
+        </div>
+      </div>
+      <p class="films__note t-mono">Deux films, pour commencer.</p>
+    </section>
 
-  /* --- Clients --- */
-  .section--clients {
-    background: var(--surface);
-  }
-  .logos {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: clamp(24px, 4vw, 48px) clamp(16px, 3vw, 40px);
-    align-items: center;
-    justify-items: center;
-  }
-  .logo-client {
-    width: 100%;
-    max-width: 180px;
-    max-height: 80px;
-    object-fit: contain;
-    filter: grayscale(1);
-    opacity: 0.7;
-    transition:
-      filter 0.3s,
-      opacity 0.3s;
-  }
-  .logo-client:hover {
-    filter: none;
-    opacity: 1;
-  }
+    <!-- Acte 7 -->
+    <BandeauContact />
 
-  /* --- Contact --- */
-  .contact {
-    background: var(--ocean);
-    color: #eef3f7;
-  }
-  .contact__contenu {
-    padding-block: clamp(64px, 10vw, 120px);
-    display: grid;
-    justify-items: center;
-  }
-  .contact .section__entete {
-    margin-bottom: 8px;
-  }
-  .contact .section__entete p {
-    color: rgb(238 243 247 / 0.75);
-  }
-  .contact__actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 16px;
-  }
-  .contact__actions .bouton {
-    letter-spacing: 0.04em;
-    text-transform: none;
-    font-size: 0.95rem;
-    overflow-wrap: anywhere;
-  }
-  .bouton--contour {
-    background: transparent;
-    color: #fff;
-    box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.7);
-  }
-  .bouton--contour:hover {
-    background: #fff;
-    color: var(--ocean);
-  }
-  .bouton svg {
-    flex: none;
-    width: 18px;
-    height: 18px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.6;
-    stroke-linejoin: round;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .hero {
-      position: relative;
-    }
-  }
-</style>
-
-<style is:global>
-  body:has(#contact) .pied {
-    position: relative;
-    z-index: 1;
-    border-top: 0;
-    background: var(--fond);
-  }
-</style>
+    <Pied />
+  </main>
+  <Vue />
+</V2>

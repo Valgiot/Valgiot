@@ -57,7 +57,7 @@ export const univers = categories
 
 /** Adresse d'une collection : sa page, ou directement son projet quand elle n'en contient qu'un (pas d'étape pour rien). */
 export const adresseCollection = (u: { slug: string; projets: Projet[] }) =>
-  u.projets.length === 1 ? `/v2/projet/${u.projets[0].id}/` : `/v2/collection/${u.slug}/`;
+  u.projets.length === 1 ? `/projet/${u.projets[0].id}/` : `/collection/${u.slug}/`;
 
 export const totalPhotos = projets.reduce((n, p) => n + p.photos.length, 0);
 

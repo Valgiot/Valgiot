@@ -4,7 +4,10 @@
   "name": "valg-studio",
   "compatibility_date": "2025-09-01",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // Adresse inconnue : Cloudflare montre la page 404 du site (src/pages/404.astro). Les anciennes adresses
+    // sont redirigées par le fichier public/_redirects.
+    "not_found_handling": "404-page"
   },
   // Nom de domaine branché automatiquement à chaque mise en ligne (le domaine est géré par Cloudflare).
   "routes": [

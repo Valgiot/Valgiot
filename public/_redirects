@@ -1,0 +1,50 @@
+# Anciennes adresses du site -> nouvelles adresses (redirections permanentes, lues par Cloudflare).
+# Les liens déjà partagés ou retenus par Google continuent de fonctionner.
+
+# Aperçu de la refonte (anciennes adresses en /v2/)
+/v2 / 301
+/v2/* /:splat 301
+
+# entreprises
+/entreprises /collection/entreprises/ 301
+/entreprises/ /collection/entreprises/ 301
+/entreprises/abeille-assurance /projet/entreprises-abeille-assurance/ 301
+/entreprises/abeille-assurance/ /projet/entreprises-abeille-assurance/ 301
+/entreprises/le-club-porticcio /projet/entreprises-le-club-porticcio/ 301
+/entreprises/le-club-porticcio/ /projet/entreprises-le-club-porticcio/ 301
+
+# evenements
+/evenements /collection/evenements/ 301
+/evenements/ /collection/evenements/ 301
+/evenements/30-ans-mnk /projet/evenements-30-ans-mnk/ 301
+/evenements/30-ans-mnk/ /projet/evenements-30-ans-mnk/ 301
+/evenements/french-dart-festival /projet/evenements-french-dart-festival/ 301
+/evenements/french-dart-festival/ /projet/evenements-french-dart-festival/ 301
+/evenements/nuit-des-combattants /projet/evenements-nuit-des-combattants/ 301
+/evenements/nuit-des-combattants/ /projet/evenements-nuit-des-combattants/ 301
+/evenements/padel-x-live /projet/evenements-padel-x-live/ 301
+/evenements/padel-x-live/ /projet/evenements-padel-x-live/ 301
+
+# marques
+/marques /projet/marques-craft/ 301
+/marques/ /projet/marques-craft/ 301
+/marques/craft /projet/marques-craft/ 301
+/marques/craft/ /projet/marques-craft/ 301
+
+# portrait
+/portrait /projet/portrait/ 301
+/portrait/ /projet/portrait/ 301
+
+# sport
+/sport /collection/sport/ 301
+/sport/ /collection/sport/ 301
+/sport/athletisme /projet/sport-athletisme/ 301
+/sport/athletisme/ /projet/sport-athletisme/ 301
+/sport/football /projet/sport-football/ 301
+/sport/football/ /projet/sport-football/ 301
+/sport/mma /projet/sport-mma/ 301
+/sport/mma/ /projet/sport-mma/ 301
+/sport/padel /projet/sport-padel/ 301
+/sport/padel/ /projet/sport-padel/ 301
+/sport/ski /projet/sport-ski/ 301
+/sport/ski/ /projet/sport-ski/ 301

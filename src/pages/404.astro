@@ -1,0 +1,29 @@
+---
+// Page affichée quand une adresse n'existe pas (lien ancien ou mal tapé).
+import V2 from '../layouts/V2.astro';
+import Pied from '../components/v2/Pied.astro';
+import Bouton from '../components/v2/Bouton.astro';
+import { SITE } from '../site';
+---
+
+<V2 titre={`Page introuvable — ${SITE.nom}`} description={`Cette page n'existe pas sur le site de ${SITE.nom}.`} noindex>
+  <main class="page scene-papier" data-page="introuvable">
+    <section class="perdu">
+      <p class="perdu__code t-titre" aria-hidden="true">404</p>
+      <h1 class="perdu__titre t-ital">Cette page n'existe pas, ou plus.</h1>
+      <p class="perdu__texte">Le lien est peut-être ancien. Les photos, elles, sont toujours là.</p>
+      <div class="rangee">
+        <Bouton texte="Voir les collections" href="/collection/" plein />
+        <Bouton texte="Retour à l'accueil" href="/" />
+      </div>
+    </section>
+    <Pied />
+  </main>
+</V2>
+
+<style>
+  .perdu { display: grid; justify-items: start; align-content: center; gap: clamp(16px, 2vw, 26px); min-height: 86svh; padding: 120px var(--marge) 80px; }
+  .perdu__code { font-size: clamp(5rem, 22vw, 20rem); line-height: 0.8; }
+  .perdu__titre { font-size: clamp(1.8rem, 4vw, 3.6rem); line-height: 1.02; }
+  .perdu__texte { max-width: 34ch; color: var(--doux); }
+</style>

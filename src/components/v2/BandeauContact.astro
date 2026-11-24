@@ -57,7 +57,7 @@ const Titre = page ? 'h1' : 'h2';
     photos.map(({ p, rang, image, x, y, l, d, tx, ty, tl }, i) => (
       <a
         class:list={['ctp__photo', { 'ctp__photo--grand': tx === undefined }]}
-        href={`/v2/projet/${p.id}/#photo-${rang + 1}`}
+        href={`/projet/${p.id}/#photo-${rang + 1}`}
         data-ctp-photo
         data-cadre
         data-legende={p.categorie !== p.titre ? `${p.titre} · ${p.categorie}` : p.titre}

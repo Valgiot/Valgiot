@@ -11,17 +11,17 @@ interface Props {
 const reste = Astro.props;
 
 const rubriques = [
-  { href: '/v2/collection/', nom: 'Photos' },
-  { href: '/v2/#films', nom: 'Films' },
-  { href: '/v2/a-propos/', nom: 'À propos' },
-  { href: '/v2/contact/', nom: 'Contact' },
+  { href: '/collection/', nom: 'Photos' },
+  { href: '/#films', nom: 'Films' },
+  { href: '/a-propos/', nom: 'À propos' },
+  { href: '/contact/', nom: 'Contact' },
 ];
 ---
 
 <footer class="pied bas" {...reste}>
   <div class="bas__haut">
     <div class="bas__marque">
-      <a class="bas__logo" href="/v2/" aria-label={`${SITE.nom}, retour à l'accueil`}>VALG</a>
+      <a class="bas__logo" href="/" aria-label={`${SITE.nom}, retour à l'accueil`}>VALG</a>
       <p>{SITE.accroche}</p>
       <p>{SITE.zone}</p>
     </div>
@@ -56,7 +56,7 @@ const rubriques = [
   <div class="bas__ligne t-mono">
     <span>© {new Date().getFullYear()} {SITE.nom}</span>
     <span class="bas__compte">{projets.length} projets · {totalPhotos} photos</span>
-    <a href="/v2/mentions-legales/">Mentions légales</a>
+    <a href="/mentions-legales/">Mentions légales</a>
   </div>
 </footer>
 

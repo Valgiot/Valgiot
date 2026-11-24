@@ -1,15 +1,17 @@
 import type { APIRoute } from 'astro';
-import { categories } from '../lib/photos';
+import { univers, projets } from '../lib/v2';
 
 // Plan du site pour Google : à déclarer dans Google Search Console.
 export const GET: APIRoute = ({ site }) => {
   const pages = [
     '/',
-    ...categories.flatMap((c) => [
-      ...(c.photos.length || c.sousCategories.length ? [`/${c.slug}/`] : []),
-      ...c.sousCategories.filter((s) => s.photos.length || s.videos.length).map((s) => `/${c.slug}/${s.slug}/`),
-    ]),
-    '/mentions-legales',
+    '/collection/',
+    // Une collection qui ne contient qu'un projet n'a pas de page à elle : on va directement au projet.
+    ...univers.filter((u) => u.projets.length > 1).map((u) => `/collection/${u.slug}/`),
+    ...projets.map((p) => `/projet/${p.id}/`),
+    '/a-propos/',
+    '/contact/',
+    '/mentions-legales/',
   ];
   const urls = pages.map((p) => `  <url><loc>${new URL(p, site)}</loc></url>`).join('\n');
   return new Response(

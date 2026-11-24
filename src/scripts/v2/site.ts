@@ -523,7 +523,7 @@ function initAnneau() {
     const avant = gsap.timeline();
     avant.to(scene, { scale: 0.8, duration: 0.95, ease: 'expo.in', transformOrigin: `${(r.left + r.width / 2 - s.left).toFixed(0)}px ${(r.top + r.height / 2 - s.top).toFixed(0)}px` }, 0);
     if (info) avant.to(info, { opacity: 0, duration: 0.25 }, 0);
-    partir(c, `/v2/projet/${c.dataset.id}/`, avant);
+    partir(c, `/projet/${c.dataset.id}/`, avant);
   };
 
   cartes[0]?.classList.add('est-face');
@@ -741,7 +741,7 @@ function initPageCollection(page: HTMLElement, items: HTMLElement[]) {
   const ici = (c: Choix) => c.href === location.pathname;
   const aller = (c: Choix, depuis: HTMLElement) => {
     if (ici(c)) { fermerRecherche(); return; }
-    if (c.href.startsWith('/v2/projet/')) partir(depuis, c.href); // vers un projet : le papier implose vers le noir
+    if (c.href.startsWith('/projet/')) partir(depuis, c.href); // vers un projet : le papier implose vers le noir
     else location.href = c.href;
   };
   let ouvert = false, attente = 0, proposes: Choix[] = [];
@@ -814,7 +814,7 @@ function initVolets() {
       v.addEventListener('click', (e) => {
         if (calme || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
         e.preventDefault();
-        if (new URL(v.href).pathname.startsWith('/v2/projet/')) { partir(v, v.href); return; } // vers un projet : le papier implose vers le noir
+        if (new URL(v.href).pathname.startsWith('/projet/')) { partir(v, v.href); return; } // vers un projet : le papier implose vers le noir
         // Vers une collection : le volet choisi s'ouvre en grand, en couleur, les autres se referment, puis on entre.
         if (groupe.classList.contains('part')) return;
         groupe.classList.add('part');
@@ -1312,7 +1312,7 @@ function initVue() {
       // Depuis un mur de collection : un raccourci vers le projet de la photo, ouvert directement sur elle.
       const id = p.projet;
       versProjet.hidden = !id || !!$('[data-page="projet"]');
-      if (id) versProjet.href = `/v2/projet/${id}/#photo-${p.rang ?? 1}`;
+      if (id) versProjet.href = `/projet/${id}/#photo-${p.rang ?? 1}`;
     }
     // Les deux voisines sont préparées pendant qu'on regarde celle-ci.
     [1, -1].forEach((d) => { const v = liste[mod(pos + d, liste.length)]; if (!v.film) preparer(v.src); });
@@ -1529,7 +1529,7 @@ function initPassages() {
   document.addEventListener('click', (e) => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href]');
     if (!a || html.dataset.scene !== 'nuit' || a.origin !== location.origin || a.target === '_blank') return;
-    if (a.pathname.startsWith('/v2/') && !a.pathname.startsWith('/v2/projet/')) memo.ecrire('valg-retour', '1');
+    if (a.pathname.startsWith('/') && !a.pathname.startsWith('/projet/')) memo.ecrire('valg-retour', '1');
   });
   addEventListener('pageshow', (e) => { if (e.persisted) location.reload(); });
 }
