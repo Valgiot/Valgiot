@@ -1,0 +1,83 @@
+---
+// Page d'une collection (Sport, Événements, Entreprises) : même construction que la page Collections, un cran plus bas.
+// En haut, un volet par projet de la collection ; en dessous, le mur calme de toutes ses photos.
+// (Une collection qui n'a qu'un seul projet n'a pas de page ici : son volet mène directement au projet.)
+import { Image } from 'astro:assets';
+import V2 from '../../../layouts/V2.astro';
+import Pied from '../../../components/v2/Pied.astro';
+import Mur from '../../../components/v2/Mur.astro';
+import Vue from '../../../components/v2/Vue.astro';
+import Volets from '../../../components/v2/Volets.astro';
+import Reperes from '../../../components/v2/Reperes.astro';
+import Compteur from '../../../components/v2/Compteur.astro';
+import { univers, deuxChiffres, adresseCollection } from '../../../lib/v2';
+
+export function getStaticPaths() {
+  return univers.filter((u) => u.projets.length > 1).map((u) => ({ params: { cat: u.slug } }));
+}
+
+const u = univers.find((x) => x.slug === Astro.params.cat)!;
+const suivante = univers[(univers.indexOf(u) + 1) % univers.length];
+// Le plus long mot du titre règle la taille des lettres, pour qu'aucun mot ne soit coupé.
+const lettres = Math.max(...u.titre.split(/\s+/).map((mot) => mot.length));
+const portes = u.projets.map((p) => ({ href: `/v2/projet/${p.id}/`, titre: p.titre, nb: p.photos.length, image: p.couverture }));
+const photos = u.projets.flatMap((p) =>
+  p.photos.map((photo, k) => ({
+    photo,
+    cat: p.catSlug,
+    projet: p.id,
+    rang: k + 1,
+    legende: `${p.titre} · ${deuxChiffres(k + 1)} / ${p.photos.length}`,
+  })),
+);
+---
+
+<V2 scene="papier" titre={u.titreSeo ? `${u.titreSeo} — V.A.L.G` : `${u.titre} — V.A.L.G`} description={u.descriptionSeo ?? u.description}>
+  <main class="page scene-papier" data-page="collection" id="haut">
+    <header class="entete">
+      <a class="lien t-mono" href="/v2/collection/">← Toutes les collections</a>
+      <h1 class="entete__titre t-titre" data-entree style={`--lettres:${lettres}`}>{u.titre}</h1>
+      <div class="entete__ligne">
+        <span class="t-mono">{u.projets.length} projets</span>
+        <span style="display:inline-flex;align-items:baseline;gap:10px;color:var(--txt);font-size:clamp(1.6rem,3vw,2.6rem)">
+          <Compteur valeur={u.nb} chiffres={Math.max(2, String(u.nb).length)} />
+          <span class="t-ital" style="font-size:.6em;color:var(--doux)">photos</span>
+        </span>
+      </div>
+    </header>
+    <section class="corps" aria-label={`Les projets — ${u.titre}`}>
+      <div class="volets-zone">
+        <Volets portes={portes} nom={`Projets — ${u.titre}`} arrive />
+        <!-- Quand on arrive par le volet de la collection : il est là, en grand et en couleur, puis il s'efface devant ses projets. -->
+        {
+          u.couverture && (
+            <div class="porte" aria-hidden="true">
+              <Image src={u.couverture} alt="" widths={[480, 900, 1400]} sizes="(max-width: 720px) 100vw, 60vw" quality={78} loading="eager" />
+              <span class="volet__txt"><span class="volet__nom">{u.titre}</span><span class="volet__nb">({u.nb})</span></span>
+            </div>
+          )
+        }
+      </div>
+    </section>
+    {
+      u.description && (
+        <section class="propos" aria-label={`À propos — ${u.titre}`}>
+          <span class="propos__nom t-mono">{u.titre} · photo et vidéo</span>
+          <p class="propos__txt" data-lit>{u.description}</p>
+        </section>
+      )
+    }
+    <section class="collection-mur" data-mur-zone aria-label={`Toutes les photos — ${u.titre}`}>
+      <Mur photos={photos} />
+    </section>
+
+    <Reperes cat="Collection" titre={u.titre} total={u.nb} haut="Projets" />
+
+    <a class="suite" href={adresseCollection(suivante)}>
+      <span class="t-mono" style="color:var(--doux)">Collection suivante</span>
+      <strong class="t-titre">{suivante.titre}</strong>
+    </a>
+    <Pied />
+  </main>
+  <Vue />
+</V2>

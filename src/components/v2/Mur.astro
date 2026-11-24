@@ -1,0 +1,84 @@
+---
+// Mur calme : les photos, rien d'autre. Elles apparaissent en fondu, un clic les ouvre en grand.
+import { Image, getImage } from 'astro:assets';
+import type { Photo } from '../../lib/photos';
+
+interface Props {
+  /** `projet` et `rang` (facultatifs) : le projet de la photo et sa place dedans, pour proposer « Voir le projet » quand elle est ouverte en grand. */
+  photos: { photo: Photo; cat: string; legende: string; projet?: string; rang?: number }[];
+}
+const { photos } = Astro.props;
+// Version « en grand » : jusqu'à 3600 px de large quand la photo d'origine le permet (les photos haute définition),
+// jamais agrandie au-delà de sa taille réelle.
+const grands = await Promise.all(photos.map(async (p) => (await getImage({ src: p.photo.image, width: 3600, quality: 88 })).src));
+---
+
+<div class="mur-zone">
+<div class="vues mur-taille" role="group" aria-label="Taille des photos">
+  {[['petit', 'Petit'], ['moyen', 'Moyen'], ['grand', 'Grand']].map(([t, nom]) => <button type="button" class="vues__btn" data-taille-choix={t} aria-pressed={t === 'moyen' ? 'true' : 'false'}>{nom}</button>)}
+</div>
+<div class="mur" data-taille="moyen">
+  {
+    photos.map((p, i) => (
+      <button type="button" class="mur__item" data-i={i} data-cadre data-cat={p.cat} data-projet={p.projet} data-rang={p.rang} data-grand={grands[i]} data-legende={p.legende}>
+        <Image
+          src={p.photo.image}
+          alt={p.photo.alt ? `${p.photo.alt} — ${p.legende}` : p.legende}
+          widths={[360, 560, 840, 1400]}
+          sizes="(max-width: 720px) 48vw, (max-width: 1100px) 32vw, 24vw"
+          quality={78}
+          loading="lazy"
+        />
+      </button>
+    ))
+  }
+</div>
+</div>
+
+<script>
+  // Choix de la taille des photos du mur. En « grand », le navigateur va chercher des versions plus fines des photos.
+  const TAILLES: Record<string, string> = {
+    petit: '(max-width: 720px) 32vw, (max-width: 1100px) 24vw, 16vw',
+    moyen: '(max-width: 720px) 48vw, (max-width: 1100px) 32vw, 24vw',
+    grand: '(max-width: 720px) 92vw, 48vw',
+  };
+  // Rangement : chaque photo, dans l'ordre, va dans la colonne la moins haute (d'après la forme de la photo).
+  // Ainsi les colonnes finissent à peu près à la même hauteur, sans grand trou en bas d'une colonne.
+  const ranger = (mur: HTMLElement) => {
+    const items = [...mur.querySelectorAll<HTMLElement>('.mur__item')];
+    mur.classList.remove('mur--range');
+    const n = Math.max(1, parseInt(getComputedStyle(mur).getPropertyValue('--cols')) || 4);
+    if (Number(mur.dataset.cols) === n) { mur.classList.add('mur--range'); return; }
+    mur.dataset.cols = String(n);
+    const cols = Array.from({ length: n }, () => { const c = document.createElement('div'); c.className = 'mur__col'; return c; });
+    const hauts = new Array(n).fill(0);
+    items.forEach((it) => {
+      const im = it.querySelector('img');
+      const w = Number(im?.getAttribute('width')), hh = Number(im?.getAttribute('height'));
+      const h = w && hh ? hh / w : 1.3;
+      let k = 0;
+      for (let j = 1; j < n; j++) if (hauts[j] < hauts[k] - 0.02) k = j;
+      cols[k].appendChild(it);
+      hauts[k] += h + 0.06;
+    });
+    mur.replaceChildren(...cols);
+    mur.classList.add('mur--range');
+  };
+  document.querySelectorAll<HTMLElement>('.mur-zone').forEach((zone) => {
+    const mur = zone.querySelector<HTMLElement>('.mur')!;
+    ranger(mur);
+    let attente = 0;
+    addEventListener('resize', () => { clearTimeout(attente); attente = window.setTimeout(() => ranger(mur), 150); });
+    const boutons = zone.querySelectorAll<HTMLElement>('[data-taille-choix]');
+    boutons.forEach((b) => b.addEventListener('click', () => {
+      const t = b.dataset.tailleChoix ?? 'moyen';
+      if (mur.dataset.taille === t) return;
+      mur.dataset.taille = t;
+      boutons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      mur.querySelectorAll('img').forEach((im) => { im.sizes = TAILLES[t]; });
+      ranger(mur);
+      // La page change de hauteur : les animations au défilement se recalent.
+      dispatchEvent(new Event('resize'));
+    }));
+  });
+</script>

@@ -1,0 +1,29 @@
+---
+// Bouton : il reste en place ; l'encre part de l'endroit où la souris entre (attribut data-aimant, géré par site.ts),
+// le texte roule et la flèche traverse.
+interface Props {
+  texte: string;
+  href?: string;
+  plein?: boolean;
+  fleche?: boolean;
+  [cle: string]: unknown;
+}
+const { texte, href, plein = false, fleche = true, ...reste } = Astro.props;
+const Balise = href ? 'a' : 'button';
+---
+
+<Balise class:list={['btn', { 'btn--plein': plein }]} href={href} type={href ? undefined : 'button'} data-aimant {...reste}>
+  <span class="btn__encre" aria-hidden="true"></span>
+  <span class="roule">
+    <span>{texte}</span>
+    <span aria-hidden="true">{texte}</span>
+  </span>
+  {
+    fleche && (
+      <span class="btn__fleche" aria-hidden="true">
+        <span>→</span>
+        <span>→</span>
+      </span>
+    )
+  }
+</Balise>

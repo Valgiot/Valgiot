@@ -1,0 +1,46 @@
+/* Contact (v2) — la scène de contact (fin de l'accueil et page Contact) et « Comment ça se passe ».
+   Chargé par src/components/v2/BandeauContact.astro. Mêmes règles que le reste du site :
+   papier ou noir, aucune couleur d'interface, tout passe par --fond / --txt / --doux / --trait. */
+
+/* ───────── La scène : calme, comme l'ouverture de l'accueil ─────────
+   Quelques photos posées en profondeur autour d'une phrase. Chaque photo a sa place (--x, --y de 0 à 100), sa largeur
+   (--l, en % de l'écran) et sa profondeur (--d) : plus elle est « proche », plus elle suit la souris et le défilement.
+   Les photos restent toujours entières dans la scène, entre la barre du haut et le bas de l'écran. */
+.ctp { --px: 0; --py: 0; --sy: 0; position: relative; height: 100svh; min-height: 560px; background: var(--fond); color: var(--txt); }
+.ctp__photo { --larg: max(calc(var(--l) * 1vw), calc(var(--l) * 7.5px)); --haut: calc(var(--larg) / var(--ar)); position: absolute; z-index: 1; left: calc((100% - var(--larg)) * var(--x) / 100); top: calc(84px + (100% - 140px - var(--haut)) * var(--y) / 100); width: var(--larg); display: block; translate: calc(var(--px) * var(--d) * -30px) calc(var(--py) * var(--d) * -22px - var(--sy) * var(--d) * 0.16px); will-change: translate; }
+.ctp__photo img { width: 100%; height: auto; border-radius: 2px; box-shadow: 0 26px 54px -20px rgb(0 0 0 / 0.32); animation: flotte var(--dur, 7s) ease-in-out var(--del, 0s) infinite alternate; transition: scale 0.7s var(--doux-out); }
+.ctp__photo:hover img { scale: 1.05; }
+.ctp__centre { position: absolute; inset: 84px 0 56px; z-index: 2; display: grid; place-content: center; justify-items: center; gap: clamp(18px, 2.2vw, 30px); padding: 0 var(--marge); text-align: center; pointer-events: none; }
+.ctp__centre > * { pointer-events: auto; }
+.ctp__repere, .ctp__zone { color: var(--doux); }
+.ctp__phrase { margin: 0; font-size: clamp(2.1rem, 4.4vw, 4.2rem); line-height: 1.04; }
+.ctp__appel { margin-top: clamp(4px, 0.8vw, 12px); }
+.ctp__liens { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 28px; font-size: 0.98rem; }
+.ctp__liens .lien { font-weight: 400; }
+.ctp__zone { position: absolute; z-index: 2; left: var(--marge); right: var(--marge); bottom: 22px; text-align: center; }
+/* Entrée, quand la scène arrive à l'écran : les photos se posent l'une après l'autre, la phrase monte doucement. */
+@keyframes ctp-pose { from { opacity: 0; scale: 0.9; } to { opacity: 1; scale: 1; } }
+@keyframes ctp-monte { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+html.ctp-anim .ctp:not(.est-vue) .ctp__photo, html.ctp-anim .ctp:not(.est-vue) .ctp__centre, html.ctp-anim .ctp:not(.est-vue) .ctp__zone { opacity: 0; }
+html.ctp-anim .ctp.est-vue .ctp__photo { animation: ctp-pose 1.5s var(--doux-out) calc(var(--k, 0) * 90ms + 0.15s) both; }
+html.ctp-anim .ctp.est-vue .ctp__centre, html.ctp-anim .ctp.est-vue .ctp__zone { animation: ctp-monte 1.3s var(--doux-out) 0.25s both; }
+
+/* ───────── Page Contact, sous la scène, en petit : comment ça se passe ───────── */
+.ctd { display: grid; gap: clamp(34px, 4.4vw, 60px); padding: clamp(90px, 12vw, 190px) var(--marge) clamp(100px, 13vw, 200px); scroll-margin-top: 40px; }
+.ctd__titre { margin: 0; font-weight: 400; color: var(--doux); }
+.ctd__etapes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px clamp(20px, 3vw, 48px); }
+.ctd__etape { display: grid; align-content: start; gap: 10px; padding-top: 16px; border-top: 1px solid var(--trait); }
+.ctd__etape > span { color: var(--doux); }
+.ctd__etape h3 { margin: 0; font-size: clamp(1.5rem, 2.1vw, 2rem); line-height: 1.05; font-weight: 400; }
+.ctd__etape p { max-width: 30ch; color: var(--doux); font-size: 0.98rem; line-height: 1.5; }
+html.ctp-anim [data-ctp-arrive] { opacity: 0; transform: translateY(18px); }
+html.ctp-anim [data-ctp-arrive].est-vue { opacity: 1; transform: none; transition: opacity 0.9s var(--doux-out), transform 1.1s var(--doux-out); transition-delay: calc(var(--k, 0) * 90ms); }
+@media (max-width: 1000px) {
+  .ctd__etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* Téléphone : les photos se rangent en deux bandes, au-dessus et au-dessous de la phrase (places --tx, --ty, --tl). */
+@media (max-width: 720px) {
+  .ctp__photo { --larg: calc(var(--tl) * min(1vw, 0.55svh)); left: calc((100% - var(--larg)) * var(--tx) / 100); top: calc(78px + (100% - 134px - var(--haut)) * var(--ty) / 100); }
+  .ctp__photo--grand { display: none; }
+  .ctp__zone { display: none; } /* cette ligne est déjà dans le pied de page */
+}

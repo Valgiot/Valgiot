@@ -1,0 +1,62 @@
+---
+// Barre fixe : une pilule qui vit (heure de Caen, liens qui se remplissent, logo qui se resserre)
+// et qui s'ouvre en trois cartes quand on appuie sur « Menu ».
+import { univers, totalPhotos, adresseCollection } from '../../lib/v2';
+import { SITE } from '../../site';
+
+const liens = [
+  { href: '/v2/collection/', nom: 'Photos' },
+  { href: '/v2/#films', nom: 'Films' },
+  { href: '/v2/a-propos/', nom: 'À propos' },
+  { href: '/v2/contact/', nom: 'Contact' },
+];
+---
+
+<header class="barre" data-barre data-ouvert="non">
+  <div class="barre__rang">
+    <a class="barre__logo" href="/v2/" aria-label="VALG, retour à l'accueil">VALG</a>
+    <nav class="barre__liens" aria-label="Navigation principale">
+      {
+        liens.map((l) => (
+          <a class="pastille" href={l.href}>
+            <span class="roule">
+              <span>{l.nom}</span>
+              <span aria-hidden="true">{l.nom}</span>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+    <span class="barre__heure t-mono" aria-hidden="true">Caen <b data-heure>--<i>:</i>--</b></span>
+    <button class="barre__menu" type="button" aria-expanded="false" aria-controls="panneau-menu">
+      Menu <span aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+  <div class="barre__panneau" id="panneau-menu">
+    <div class="barre__cartes">
+      <div class="carte-menu">
+        <h3><a href="/v2/collection/" style="text-decoration:none">Photos</a><sup>({totalPhotos})</sup></h3>
+        <ul>
+          {
+            univers.map((u) => (
+              <li>
+                <a href={adresseCollection(u)}>
+                  <span>{u.titre}</span>
+                  <span>{u.nb}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <a class="carte-menu carte-menu--claire" href="/v2/#films">
+        <h3>Films</h3>
+        <p>Bande démo et films clients, bientôt ici.</p>
+      </a>
+      <a class="carte-menu carte-menu--claire" href="/v2/contact/">
+        <h3>Contact</h3>
+        <p>{SITE.email}<br />@{SITE.instagram.pseudo}</p>
+      </a>
+    </div>
+  </div>
+</header>

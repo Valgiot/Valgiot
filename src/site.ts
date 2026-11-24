@@ -20,6 +20,9 @@ export const SITE = {
   // Domaines cités à Google dans les données structurées.
   domaines: ['Photographie de sport', 'Vidéo', 'Photographie culinaire', 'Photographie de restaurant', "Photographie d'entreprise", 'Portrait', 'Photographie événementielle'],
   email: 'valentingiot@hotmail.com',
+  // Numéro de téléphone affiché sur la page Contact, écrit comme tu veux le voir : '06 12 34 56 78'.
+  // Laisse vide ('') pour ne pas l'afficher.
+  telephone: '',
   instagram: {
     pseudo: 'valg_studio__',
     url: 'https://www.instagram.com/valg_studio__/',

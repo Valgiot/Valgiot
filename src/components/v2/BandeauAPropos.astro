@@ -1,0 +1,210 @@
+---
+// Bandeau « À propos » de l'accueil : une phrase géante dont les mots s'allument au défilement, et un cadre
+// où les photos se succèdent en rafale (un coup d'obturateur à chaque image). Il donne envie de lire le récit
+// de la page /v2/a-propos/. Autonome : son style et son script sont dans ce fichier.
+// Pour le poser sur une page : <BandeauAPropos />
+import { Image } from 'astro:assets';
+import Bouton from './Bouton.astro';
+import { projets, deuxChiffres } from '../../lib/v2';
+
+interface Props {
+  /** Ancre de la section (le menu pointe dessus). */
+  id?: string;
+}
+const { id = 'a-propos' } = Astro.props;
+
+// La rafale : projet + début du nom du fichier. Si une photo est retirée du site, la couverture du projet la remplace.
+const RAFALE: [string, string][] = [
+  ['sport-padel', '01-'],
+  ['sport-football', '17-'],
+  ['evenements-30-ans-mnk', '04-'],
+];
+const rafale = RAFALE.flatMap(([pid, debut]) => {
+  const p = projets.find((x) => x.id === pid);
+  if (!p) return [];
+  const ph = p.photos.find((x) => x.nom.startsWith(debut));
+  return [{ p, image: ph?.image ?? p.couverture, rang: ph ? p.photos.indexOf(ph) + 1 : 1 }];
+});
+
+// Les temps du récit, annoncés comme un sommaire.
+const TEMPS = [
+  ['le-terrain', 'Le terrain'],
+  ['l-instant', "L'instant"],
+  ['le-silence', 'Le silence'],
+  ['la-lumiere', 'La lumière'],
+  ['le-bruit', 'Le bruit'],
+  ['ailleurs', 'Ailleurs'],
+  ['moi', 'Moi'],
+];
+const mots = (t: string) => t.split(' ');
+---
+
+<section class="bap" id={id} data-bap aria-labelledby={`${id}-titre`}>
+  <div class="bap__haut t-mono">
+    <span>À propos</span>
+    <span>Un récit en {TEMPS.length} temps</span>
+  </div>
+
+  <div class="bap__corps">
+    <h2 class="bap__phrase t-titre" id={`${id}-titre`}>
+      <span class="bap__ligne">{mots('Je cherche').map((m) => <><span class="bap__m" data-bap-m>{m}</span>{' '}</>)}</span>
+      <span class="bap__ligne bap__ligne--2"><span class="bap__m" data-bap-m>l'instant</span></span>
+      <span class="bap__ligne">{mots('où tout').map((m) => <><span class="bap__m" data-bap-m>{m}</span>{' '}</>)}</span>
+      <span class="bap__ligne bap__ligne--4"><span class="bap__m bap__bascule t-ital" data-bap-m data-bap-bascule>bascule.</span></span>
+    </h2>
+
+    <div class="bap__rafale" data-bap-rafale>
+      <div class="bap__cadre" data-bap-cadre>
+        {
+          rafale.map(({ p, image, rang }, i) => (
+            <a
+              class:list={['bap__vue', { 'est-la': i === 0 }]}
+              href={`/v2/projet/${p.id}/#photo-${rang}`}
+              data-bap-vue
+              data-vers-projet
+              data-cadre
+              data-nom={p.titre}
+              data-legende={`Ouvrir ${p.titre}`}
+              aria-label={`${p.titre}, photo ${rang} sur ${p.photos.length}`}
+            >
+              <Image src={image} alt="" widths={[360, 640, 960]} sizes="(max-width: 720px) 64vw, 30vw" quality={80} draggable="false" />
+            </a>
+          ))
+        }
+        <i class="bap__lame bap__lame--haut" data-bap-lame aria-hidden="true"></i>
+        <i class="bap__lame bap__lame--bas" data-bap-lame aria-hidden="true"></i>
+      </div>
+      <p class="bap__legende t-mono" aria-hidden="true">
+        <span data-bap-nom>{rafale[0]?.p.titre}</span>
+        <span><b data-bap-rang>01</b> / {deuxChiffres(rafale.length)}</span>
+      </p>
+    </div>
+
+    <div class="bap__bas">
+      <p class="bap__texte">Sur le terrain, en tribune, en coulisses&nbsp;: je photographie et je filme ce qui ne se rejoue pas.</p>
+      <ol class="bap__temps t-mono" aria-label="Les temps du récit">
+        {
+          TEMPS.map(([ancre, nom], i) => (
+            <li>
+              <a href={`/v2/a-propos/#${ancre}`}>
+                <span>{deuxChiffres(i + 1)}</span> {nom}
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <Bouton texte="Lire le récit" href="/v2/a-propos/" plein />
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* Bandeau « À propos » — sur le papier. Seules les photos apportent la couleur. */
+  .bap { position: relative; padding: clamp(96px, 15vw, 210px) var(--marge) clamp(96px, 15vw, 210px); background: var(--fond); color: var(--txt); overflow: clip; }
+  .bap__haut { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--trait); color: var(--doux); }
+  .bap__corps { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); grid-template-areas: 'phrase rafale' 'bas rafale'; align-items: start; gap: clamp(28px, 4vw, 64px) clamp(20px, 4vw, 70px); padding-top: clamp(28px, 4.4vw, 70px); }
+
+  /* La phrase : quatre lignes en très grand, légèrement décalées. */
+  .bap__phrase { grid-area: phrase; display: grid; font-size: clamp(2.1rem, 6.3vw, 7.6rem); line-height: 0.9; margin: 0; }
+  .bap__ligne { display: block; white-space: nowrap; }
+  .bap__ligne--2 { padding-left: 1.15em; }
+  .bap__ligne--4 { padding-left: 0.5em; padding-top: 0.04em; }
+  .bap__m { display: inline-block; }
+  .bap__bascule { font-size: 1.22em; line-height: 0.86; transform-origin: 0% 100%; transition: rotate 1s cubic-bezier(0.3, 1.45, 0.45, 1), translate 1s cubic-bezier(0.3, 1.45, 0.45, 1); }
+  /* Le dernier mot fait ce qu'il dit. */
+  .bap__bascule.est-tombe { rotate: 4.5deg; translate: 0.04em 0.05em; }
+
+  /* La rafale : un cadre vertical, deux lames d'obturateur. */
+  .bap__rafale { grid-area: rafale; display: grid; gap: 12px; align-self: center; rotate: 1.6deg; }
+  .bap__cadre { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--voile); border-radius: 2px; box-shadow: 0 34px 70px -30px rgb(0 0 0 / 0.42); }
+  .bap__vue { position: absolute; inset: 0; display: block; visibility: hidden; }
+  .bap__vue.est-la { visibility: visible; }
+  .bap__vue img { width: 100%; height: 100%; object-fit: cover; }
+  .bap__lame { position: absolute; z-index: 2; left: 0; right: 0; height: 50.5%; background: var(--noir); transform: scaleY(0); pointer-events: none; }
+  .bap__lame--haut { top: 0; transform-origin: 50% 0; }
+  .bap__lame--bas { bottom: 0; transform-origin: 50% 100%; }
+  .bap__legende { display: flex; justify-content: space-between; gap: 12px; margin: 0; color: var(--doux); }
+  .bap__legende b { font-weight: 500; color: var(--txt); }
+
+  .bap__bas { grid-area: bas; display: grid; justify-items: start; gap: clamp(18px, 2.2vw, 30px); }
+  .bap__texte { max-width: 30ch; font-family: var(--ital); font-style: italic; font-size: clamp(1.3rem, 2.3vw, 2.1rem); line-height: 1.12; }
+  .bap__temps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; color: var(--doux); }
+  .bap__temps a { display: inline-block; padding: 4px 0; text-decoration: none; transition: color 0.35s; }
+  .bap__temps a:hover, .bap__temps a:focus-visible { color: var(--txt); }
+  .bap__temps span { opacity: 0.6; }
+
+  @media (max-width: 720px) {
+    .bap__corps { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'phrase' 'rafale' 'bas'; }
+    .bap__phrase { font-size: clamp(1.9rem, 10.4vw, 4rem); }
+    .bap__rafale { width: 62vw; justify-self: end; margin-right: 8px; }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const borne = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
+  const etale = (p: number, a: number, b: number) => borne((p - a) / (b - a), 0, 1);
+
+  function initBandeau(section: HTMLElement) {
+    const mots = [...section.querySelectorAll<HTMLElement>('[data-bap-m]')];
+    const bascule = section.querySelector<HTMLElement>('[data-bap-bascule]');
+    const cadre = section.querySelector<HTMLElement>('[data-bap-cadre]');
+    const vues = [...section.querySelectorAll<HTMLElement>('[data-bap-vue]')];
+    const lames = [...section.querySelectorAll<HTMLElement>('[data-bap-lame]')];
+    const nom = section.querySelector<HTMLElement>('[data-bap-nom]');
+    const rang = section.querySelector<HTMLElement>('[data-bap-rang]');
+    const corps = section.querySelector<HTMLElement>('.bap__corps');
+    if (!corps || !cadre || !vues.length) return;
+
+    let courant = 0;
+    const montrer = (i: number) => {
+      vues.forEach((v, k) => v.classList.toggle('est-la', k === i));
+      if (nom) nom.textContent = vues[i].dataset.nom ?? '';
+      if (rang) rang.textContent = String(i + 1).padStart(2, '0');
+    };
+    // Un coup d'obturateur : les deux lames se ferment, l'image change dans le noir, elles se rouvrent.
+    const declencher = (i: number) => {
+      courant = i;
+      gsap.killTweensOf(lames);
+      gsap
+        .timeline()
+        .to(lames, { scaleY: 1, duration: 0.07, ease: 'power2.in' })
+        .add(() => montrer(i))
+        .to(lames, { scaleY: 0, duration: 0.26, ease: 'power3.out' });
+    };
+
+    const regler = (p: number) => {
+      // Les mots s'allument un à un.
+      mots.forEach((m, k) => {
+        const e = etale(p, (k / (mots.length + 1.5)) * 0.72, ((k + 1.5) / (mots.length + 1.5)) * 0.72);
+        m.style.opacity = (0.13 + 0.87 * e).toFixed(3);
+      });
+      bascule?.classList.toggle('est-tombe', p > 0.74);
+      // La première photo reste plus longtemps : elle arrive par le bas de l'écran et doit avoir le temps d'être vue en entier.
+      // Elle change au milieu du passage, les suivantes se partagent la fin.
+      const PREMIER = 0.45;
+      const i = p < PREMIER ? 0 : borne(1 + Math.floor(etale(p, PREMIER, 0.98) * (vues.length - 1)), 1, vues.length - 1);
+      if (i !== courant) declencher(i);
+    };
+    // « refreshPriority » négatif : ces repères sont mesurés après les sections épinglées de la page (ils ne changent
+    // pas sa hauteur), quel que soit l'ordre dans lequel les scripts se lancent.
+    const suivi = ScrollTrigger.create({ trigger: corps, start: 'top 82%', end: 'bottom 62%', refreshPriority: -1, onUpdate: (st) => regler(st.progress), onRefresh: (st) => regler(st.progress) });
+    regler(suivi.progress);
+    // Le cadre dérive doucement pendant qu'on passe.
+    gsap.fromTo(section.querySelector('[data-bap-rafale]'), { y: 46 }, { y: -46, ease: 'none', scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: true, refreshPriority: -1 } });
+  }
+
+  if (!calme) {
+    // Après les sections épinglées de la page (créées une fois les polices prêtes), pour que les positions soient justes.
+    document.fonts.ready.then(() =>
+      requestAnimationFrame(() => {
+        document.querySelectorAll<HTMLElement>('[data-bap]').forEach(initBandeau);
+        ScrollTrigger.refresh();
+      }),
+    );
+  }
+</script>

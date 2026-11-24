@@ -1,0 +1,30 @@
+---
+// Compteur à rouleaux : chaque chiffre défile comme sur un tableau d'affichage mécanique.
+interface Props {
+  valeur: number;
+  total?: number;
+  chiffres?: number;
+  [cle: string]: unknown;
+}
+const { valeur, total, chiffres = 2, ...reste } = Astro.props;
+const texte = String(valeur).padStart(chiffres, '0');
+const dix = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+---
+
+<span class="cpt" data-cpt {...reste}>
+  <span class="cpt__chiffres" aria-hidden="true">
+    {
+      [...texte].map((c) => (
+        <span class="cpt__col">
+          <span class="cpt__ruban" style={`transform: translateY(-${Number(c) * 10}%)`}>
+            {dix.map((n) => (
+              <span>{n}</span>
+            ))}
+          </span>
+        </span>
+      ))
+    }
+  </span>
+  <span class="cache" data-cpt-txt>{valeur}</span>
+  {total !== undefined && <span class="cpt__total">/ {total}</span>}
+</span>

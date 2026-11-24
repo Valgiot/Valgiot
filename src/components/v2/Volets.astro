@@ -1,0 +1,37 @@
+---
+// Volets : des panneaux en noir et blanc qui s'ouvrent au survol ; la couleur revient autour du curseur.
+// Chaque volet est une porte : il mène à une collection, ou à un projet.
+// Sans réglage, ce sont les cinq collections (Sport, Événements…).
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { univers, adresseCollection } from '../../lib/v2';
+
+interface Props {
+  portes?: { href: string; titre: string; nb: number; image?: ImageMetadata }[];
+  /** Nom lu par les lecteurs d'écran. */
+  nom?: string;
+  /** Les volets se déplient l'un après l'autre à l'arrivée sur la page. */
+  arrive?: boolean;
+}
+const {
+  portes = univers.map((u) => ({ href: adresseCollection(u), titre: u.titre, nb: u.nb, image: u.couverture })),
+  nom = 'Collections',
+  arrive = false,
+} = Astro.props;
+---
+
+<nav class:list={['volets', arrive && 'volets--arrive']} aria-label={nom}>
+  {
+    portes.map((v, k) => (
+      <a class="volet" href={v.href} style={`--k:${k}`} aria-label={`${v.titre}, ${v.nb} photos`}>
+        {v.image && (
+          <>
+            <span class="volet__img"><Image src={v.image} alt="" widths={[480, 900, 1400]} sizes="(max-width: 720px) 100vw, 60vw" quality={78} /></span>
+            <span class="volet__gris"><Image src={v.image} alt="" widths={[480, 900, 1400]} sizes="(max-width: 720px) 100vw, 60vw" quality={78} /></span>
+          </>
+        )}
+        <span class="volet__txt"><span class="volet__nom">{v.titre}</span><span class="volet__nb">({v.nb})</span></span>
+      </a>
+    ))
+  }
+</nav>

@@ -1,0 +1,97 @@
+---
+// Anneau 3D : la caméra est au centre exact d'un cercle de photos et regarde légèrement vers le bas.
+// Chaque photo est tournée vers nous, posée à l'une de trois hauteurs, avec sa taille, sa distance et son penché propres :
+// rien n'est aligné avec le voisin. (Même construction que meech213.com : champ large, donc les photos des bords grandissent.)
+import { Image } from 'astro:assets';
+import Compteur from './Compteur.astro';
+import { projets, alea } from '../../lib/v2';
+
+const pas = 360 / projets.length;
+const borne = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+const deg = (rad: number) => (rad * 180) / Math.PI;
+
+// Hauteurs en fraction du rayon (0 = à hauteur d'yeux, plus grand = plus bas). Deux voisines n'ont jamais la même.
+const NIVEAUX = [0.02, 0.11, 0.215];
+const ORDRE = [1, 0, 2, 0, 1, 2, 0, 2, 1, 0, 2, 1, 0];
+const JEU_H = 0.022, JEU_R = 0.06, JEU_S = 0.11;
+
+const cartes = projets.map((p, i) => {
+  const h = NIVEAUX[ORDRE[i % ORDRE.length]] + JEU_H * alea(i, 3);
+  const r = 1 + JEU_R * alea(i, 2);
+  const ar = borne(p.couverture.width / p.couverture.height, 0.66, 1.18);
+  return {
+    p,
+    i,
+    ar,
+    // Une photo en largeur est un peu moins haute, pour ne pas écraser ses voisines.
+    s: (1 + JEU_S * alea(i, 1)) * (ar > 1 ? 0.85 : 1),
+    r,
+    h,
+    da: 0.09 * pas * alea(i, 7),
+    // La photo se penche en arrière juste assez pour nous regarder en face.
+    pit: deg(Math.atan((h + 0.085) / r)),
+    yaw: 5 * alea(i, 8),
+    rz: 4 * alea(i, 4),
+  };
+});
+
+// Repères invisibles : la photo la plus haute et la plus basse possibles. Le script s'en sert pour cadrer l'anneau entre la barre et le titre.
+// (La photo de face avance de 0.13 vers nous : voir « est-face » dans v2.css.)
+const AVANCE_FACE = 0.13;
+const sHaut = 1 + JEU_S * 0.5;
+const gabarit = (h: number, r: number, angle: number) =>
+  `--gs:${sHaut.toFixed(3)};--gr:${r.toFixed(3)};--gh:${h.toFixed(4)};--ga:${angle.toFixed(3)}deg;--gp:${deg(Math.atan((h + 0.085) / r)).toFixed(2)}deg`;
+---
+
+<section class="anneau" data-anneau aria-label="Tous les projets">
+  <div class="anneau__scene">
+    <div class="anneau__monde" data-monde style={`--pas:${pas.toFixed(4)}deg`}>
+      {
+        cartes.map(({ p, i, ar, s, r, h, da, pit, yaw, rz }) => (
+          <button
+            type="button"
+            class="anneau__carte"
+            data-carte
+            data-cadre
+            data-i={i}
+            data-id={p.id}
+            data-titre={p.titre}
+            data-cat={p.categorie}
+            data-nb={p.photos.length}
+            data-legende={`${p.titre} · ${p.photos.length} photos`}
+            aria-label={`${p.titre}, ${p.categorie}, ${p.photos.length} photos`}
+            style={[
+              `--i:${i}`,
+              `--ar:${ar.toFixed(3)}`,
+              `--s:${s.toFixed(3)}`,
+              `--r:${r.toFixed(3)}`,
+              `--h:${h.toFixed(4)}`,
+              `--da:${da.toFixed(2)}deg`,
+              `--pit:${pit.toFixed(2)}deg`,
+              `--yaw:${yaw.toFixed(2)}deg`,
+              `--rz:${rz.toFixed(2)}deg`,
+              `--dur:${(7 + 2 * alea(i, 5)).toFixed(1)}s`,
+              `--del:${(-3 * (alea(i, 6) + 1)).toFixed(1)}s`,
+            ].join(';')}
+          >
+            <Image src={p.couverture} alt="" widths={[320, 480, 720]} sizes="(max-width: 720px) 60vw, 30vw" quality={80} loading="eager" draggable="false" />
+          </button>
+        ))
+      }
+    </div>
+    <div class="anneau__monde anneau__monde--repere" aria-hidden="true" style={`--pas:${pas.toFixed(4)}deg`}>
+      <span class="anneau__gabarit" data-gabarit-haut style={gabarit(NIVEAUX[0] - JEU_H * 0.5, 1 - AVANCE_FACE, 0)}></span>
+      <span class="anneau__gabarit" data-gabarit-bas style={gabarit(NIVEAUX[2] + JEU_H * 0.5, 1 - JEU_R * 0.5, pas)}></span>
+    </div>
+  </div>
+  <div class="anneau__info">
+    <div class="anneau__nom" aria-live="polite">
+      <span class="anneau__cat t-ital" data-info-cat>({projets[0].categorie})</span>
+      <h2 class="anneau__titre t-titre" data-info-titre>{projets[0].titre}</h2>
+    </div>
+    <div class="anneau__cote">
+      <Compteur valeur={1} total={projets.length} data-position />
+      <span class="anneau__aide t-mono">Tous les projets</span>
+    </div>
+  </div>
+</section>

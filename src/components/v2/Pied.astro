@@ -1,0 +1,166 @@
+---
+// Pied de page commun à toutes les pages de la refonte : le nom, les rubriques, les moyens de contact
+// et le lien vers les mentions légales. Sobre : il prend les teintes de la page (papier ou noir).
+// Il garde la classe « pied », qui sert de repère de fin de page aux scripts.
+import { SITE } from '../../site';
+import { projets, totalPhotos } from '../../lib/v2';
+
+interface Props {
+  [cle: string]: unknown;
+}
+const reste = Astro.props;
+
+const rubriques = [
+  { href: '/v2/collection/', nom: 'Photos' },
+  { href: '/v2/#films', nom: 'Films' },
+  { href: '/v2/a-propos/', nom: 'À propos' },
+  { href: '/v2/contact/', nom: 'Contact' },
+];
+---
+
+<footer class="pied bas" {...reste}>
+  <div class="bas__haut">
+    <div class="bas__marque">
+      <a class="bas__logo" href="/v2/" aria-label={`${SITE.nom}, retour à l'accueil`}>VALG</a>
+      <p>{SITE.accroche}</p>
+      <p>{SITE.zone}</p>
+    </div>
+
+    <nav class="bas__col" aria-label="Rubriques du site">
+      <span class="t-mono">Le site</span>
+      <ul>
+        {
+          rubriques.map((r) => (
+            <li>
+              <a href={r.href}>{r.nom}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="bas__col">
+      <span class="t-mono">Contact</span>
+      <ul>
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+        {SITE.telephone && <li><a href={`tel:${SITE.telephone.replace(/[^\d+]/g, '')}`}>{SITE.telephone}</a></li>}
+        <li>
+          <a href={SITE.instagram.url} target="_blank" rel="noopener" aria-label={`Instagram : @${SITE.instagram.pseudo} (nouvel onglet)`}>
+            Instagram · @{SITE.instagram.pseudo}
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bas__ligne t-mono">
+    <span>© {new Date().getFullYear()} {SITE.nom}</span>
+    <span class="bas__compte">{projets.length} projets · {totalPhotos} photos</span>
+    <a href="/v2/mentions-legales/">Mentions légales</a>
+  </div>
+</footer>
+
+<style>
+  .bas {
+    display: block;
+    padding: clamp(44px, 6vw, 84px) var(--marge) 26px;
+    border-top: 1px solid var(--trait);
+    background: var(--fond);
+    color: var(--txt);
+  }
+  .bas__haut {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 36px clamp(24px, 5vw, 80px);
+    align-items: start;
+    padding-bottom: clamp(40px, 5vw, 72px);
+  }
+  .bas__marque {
+    display: grid;
+    justify-items: start;
+    gap: 4px;
+    color: var(--doux);
+    font-size: 0.95rem;
+  }
+  .bas__logo {
+    margin-bottom: 10px;
+    color: var(--txt);
+    font-family: var(--titre);
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    font-variation-settings: 'wdth' 125;
+  }
+  .bas__col {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+  }
+  .bas__col > span {
+    color: var(--doux);
+  }
+  .bas ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  /* Les liens : un trait fin se trace dessous au survol. Rien d'autre. */
+  .bas ul a,
+  .bas__ligne a {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    padding: 3px 0;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+  .bas ul a::after,
+  .bas__ligne a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right center;
+    transition: transform 0.5s var(--net);
+  }
+  .bas ul a:hover::after,
+  .bas ul a:focus-visible::after,
+  .bas__ligne a:hover::after,
+  .bas__ligne a:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+  .bas__ligne {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--trait);
+    color: var(--doux);
+  }
+  .bas__ligne a {
+    color: var(--txt);
+  }
+  @media (max-width: 720px) {
+    .bas__haut {
+      grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.5fr);
+      gap: 32px 20px;
+      font-size: 0.93rem;
+    }
+    .bas__marque {
+      grid-column: 1 / -1;
+    }
+    .bas__compte {
+      display: none;
+    }
+  }
+</style>

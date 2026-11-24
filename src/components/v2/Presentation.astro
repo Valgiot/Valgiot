@@ -1,0 +1,215 @@
+---
+// Présentation de Valentin, sur l'accueil, juste sous l'ouverture.
+// L'idée : sa « carte de profil » est un badge d'accréditation, celui que les photographes portent au cou au bord
+// du terrain. Il est posé sur le papier, légèrement de travers, avec sa sangle qui fait une grande boucle au-dessus.
+// Il est dessiné dans le langage du site : papier et encre, traits fins, la photo pour seule couleur.
+// Sur le badge : son portrait, son nom, son métier, et ses « accès » — les collections du site, qui sont des liens.
+// À côté : son texte de présentation (repris de src/site.ts, écrit par lui) et un bouton vers son histoire.
+// Autonome : son style et son script sont dans ce fichier.
+//
+// LE PORTRAIT : il est dans le dossier src/portrait/. « 01-badge-… » est le cadrage carré du badge, « 02-a-propos-… »
+// celui de la page À propos ; la photo d'origine est gardée dans src/portrait/original/. Pour changer de portrait,
+// remplacer ces fichiers. Tant que le dossier est vide, le badge annonce « Portrait à venir ».
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Bouton from './Bouton.astro';
+import { SITE } from '../../site';
+import { univers, adresseCollection, projets, totalPhotos } from '../../lib/v2';
+
+interface Props {
+  /** Ancre de la section. */
+  id?: string;
+}
+const { id = 'presentation' } = Astro.props;
+
+const trouvees = import.meta.glob<{ default: ImageMetadata }>('/src/portrait/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG,WEBP}', { eager: true });
+// Celle dont le nom contient « badge » (cadrage carré, serré), sinon la première.
+const cles = Object.keys(trouvees).sort();
+const portrait = trouvees[cles.find((k) => k.includes('badge')) ?? cles[0]]?.default;
+const insecable = (t: string) => t.replace(/ ([:;?!])/g, ' $1');
+// Le texte tissé sur le cordon, répété sur toute sa longueur.
+const tissage = Array(14).fill('VALG  /  PHOTO & VIDÉO  /  CAEN  /  ').join('');
+---
+
+<section class="moi" id={id} data-moi aria-labelledby={`${id}-titre`}>
+  <!-- La sangle : une boucle qui part de l'attache du badge et y revient. Tracée par le script (elle suit la place du badge). -->
+  <svg class="moi__cordon" aria-hidden="true" focusable="false">
+    <path class="moi__bord" id={`${id}-sangle`} data-moi-sangle d="" />
+    <path class="moi__ruban" data-moi-sangle d="" />
+    <text dy="0.36em"><textPath href={`#${id}-sangle`} startOffset="18">{tissage}</textPath></text>
+  </svg>
+
+  <div class="moi__corps">
+    <div class="moi__carte" data-moi-carte>
+      <div class="moi__balance" data-moi-balance>
+        <article class="badge" data-moi-badge aria-label="Badge de Valentin Giot, photographe et vidéaste">
+          <i class="badge__attache" aria-hidden="true"></i>
+          <i class="badge__fente" aria-hidden="true"></i>
+          <header class="badge__haut t-mono">
+            <span>Accréditation</span>
+            <span>{SITE.ville}, {SITE.region}</span>
+          </header>
+          <div class="badge__photo">
+            {
+              portrait ? (
+                <Image src={portrait} alt="Valentin Giot, appareil photo en main" widths={[360, 640, 960]} sizes="(max-width: 720px) 70vw, 26vw" quality={82} draggable="false" />
+              ) : (
+                <div class="badge__vide" role="img" aria-label="Emplacement du portrait de Valentin : photo à venir">
+                  <i></i><i></i><i></i><i></i>
+                  <span class="t-ital" aria-hidden="true">Portrait à venir</span>
+                </div>
+              )
+            }
+          </div>
+          <p class="badge__metier t-ital">(Photographe &amp; vidéaste)</p>
+          <p class="badge__nom t-titre"><span>Valentin</span><span>Giot</span></p>
+          <div class="badge__acces">
+            <span class="t-mono">Accès</span>
+            <ul>
+              {
+                univers.map((u) => (
+                  <li>
+                    <a href={adresseCollection(u)}>
+                      <span>{u.titre}</span>
+                      <span>{u.nb}</span>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+          <footer class="badge__bas t-mono">
+            <span>{projets.length} projets, {totalPhotos} photos</span>
+            <span>VALG</span>
+          </footer>
+        </article>
+      </div>
+    </div>
+
+    <div class="moi__txt">
+      <h2 class="moi__titre t-ital" id={`${id}-titre`}>Moi, c'est Valentin.</h2>
+      <p class="moi__texte">{insecable(SITE.presentation)}</p>
+      <p class="moi__zone">{SITE.zone}</p>
+      <Bouton texte="Lire mon histoire" href="/v2/a-propos/" plein />
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* Présentation — sur le papier. Un seul objet fort : le badge et son cordon. Le texte reste calme. */
+  .moi { position: relative; padding: clamp(190px, 21vw, 300px) var(--marge) clamp(100px, 14vw, 200px); background: var(--fond); color: var(--txt); overflow-x: clip; }
+  /* Comme la section qu'elle remplace : elle remonte sous la fin du ciel, pour ne pas laisser un écran vide entre les deux. */
+  .ciel + .moi, .pin-spacer:has(> .ciel) + .moi { margin-top: -40svh; z-index: 1; }
+
+  .moi__corps { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: 'txt carte'; align-items: center; gap: clamp(28px, 5vw, 90px); }
+
+  .moi__txt { grid-area: txt; display: grid; justify-items: start; gap: clamp(18px, 2.2vw, 30px); padding-top: clamp(40px, 9vw, 150px); }
+  .moi__titre { font-size: clamp(2.3rem, 5vw, 5.2rem); line-height: 0.98; margin: 0 0 clamp(2px, 0.6vw, 10px); }
+  .moi__texte { max-width: 25em; font-family: var(--ital); font-size: clamp(1.3rem, 2.05vw, 1.95rem); line-height: 1.18; text-wrap: pretty; }
+  .moi__zone { max-width: 34ch; color: var(--doux); }
+
+  /* La sangle : un ruban de papier bordé d'un trait fin, son texte imprimé dessus. Du dessin au trait, comme la barre du site. */
+  .moi__cordon { --ruban: 21px; position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .moi__cordon path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .moi__bord { stroke: var(--txt); stroke-width: var(--ruban); }
+  .moi__ruban { stroke: var(--fond); stroke-width: calc(var(--ruban) - 2.4px); }
+  .moi__cordon text { fill: var(--txt); font-family: var(--titre); font-weight: 800; font-variation-settings: 'wdth' 125; font-size: calc(var(--ruban) * 0.4); letter-spacing: 0.16em; white-space: pre; }
+
+  /* Le badge : une carte de papier clair, bordée d'un trait, avec l'ombre des photos du site. Il pend légèrement de travers. */
+  .moi__carte { grid-area: carte; justify-self: center; width: clamp(250px, 26vw, 356px); perspective: 1100px; }
+  .moi__balance { rotate: -2.6deg; transform-origin: 50% 0; }
+  .badge { --rx: 0deg; --ry: 0deg; --b-fond: color-mix(in srgb, var(--papier) 45%, #fff); position: relative; container-type: inline-size; display: grid; gap: 12px; padding: 46px 16px 14px; border: 1px solid var(--trait); border-radius: 10px; background: var(--b-fond); color: var(--txt); box-shadow: 0 40px 80px -34px rgb(0 0 0 / 0.42); transform: rotateX(var(--rx)) rotateY(var(--ry)); transition: transform 0.7s var(--doux-out); }
+  .badge.est-vise { transition: transform 0.14s linear; }
+  /* La fente laisse voir la page ; l'attache est une petite pastille au trait, comme les boutons du site. */
+  .badge__fente { position: absolute; left: 50%; top: 17px; width: 56px; height: 12px; margin-left: -28px; border-radius: 999px; background: var(--fond); border: 1px solid var(--trait); box-shadow: 0 1px 2px rgb(0 0 0 / 0.14) inset; }
+  .badge__attache { position: absolute; left: 50%; top: -13px; width: 30px; height: 38px; margin-left: -15px; border-radius: 999px; background: var(--b-fond); border: 1.2px solid var(--txt); }
+  .badge__haut, .badge__bas { display: flex; justify-content: space-between; gap: 10px; font-size: 0.62rem; color: var(--doux); }
+  .badge__photo { position: relative; aspect-ratio: 1 / 1; overflow: hidden; border-radius: 2px; background: var(--voile); }
+  .badge__photo img { width: 100%; height: 100%; object-fit: cover; }
+  /* Sans photo : un viseur vide, comme le curseur du site, qui attend son sujet. */
+  .badge__vide { position: absolute; inset: 0; display: grid; place-content: center; color: var(--doux); font-size: 1.15rem; }
+  .badge__vide i { position: absolute; width: 16px; height: 16px; border: 1.5px solid currentColor; opacity: 0.6; }
+  .badge__vide i:nth-child(1) { left: 14px; top: 14px; border-right: 0; border-bottom: 0; }
+  .badge__vide i:nth-child(2) { right: 14px; top: 14px; border-left: 0; border-bottom: 0; }
+  .badge__vide i:nth-child(3) { left: 14px; bottom: 14px; border-right: 0; border-top: 0; }
+  .badge__vide i:nth-child(4) { right: 14px; bottom: 14px; border-left: 0; border-top: 0; }
+  /* Le métier entre parenthèses puis le nom en grand, comme les en-têtes des pages. Le nom remplit la largeur du badge. */
+  .badge__metier { font-size: 1.25rem; font-size: 6.4cqw; line-height: 1; margin-top: 6px; }
+  .badge__nom { display: grid; margin: -6px 0 2px; font-size: 2.2rem; font-size: 14.4cqw; line-height: 0.9; }
+  .badge__acces { display: grid; gap: 2px; }
+  .badge__acces > span { font-size: 0.62rem; color: var(--doux); padding-bottom: 4px; }
+  .badge__acces ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .badge__acces a { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding: 5px 0; font-size: 0.9rem; line-height: 1.2; text-decoration: none; border-top: 1px solid var(--trait); transition: padding-left 0.35s var(--doux-out); }
+  .badge__acces a:hover, .badge__acces a:focus-visible { padding-left: 8px; }
+  .badge__acces a span:last-child { font-family: var(--ital); font-style: italic; opacity: 0.7; }
+  .badge__bas { padding-top: 8px; border-top: 1px solid var(--trait); align-items: baseline; }
+  .badge__bas span:last-child { font-family: var(--titre); font-weight: 800; font-variation-settings: 'wdth' 125; letter-spacing: 0; color: var(--txt); }
+
+  @media (max-width: 720px) {
+    .moi { padding-top: 170px; }
+    .moi__corps { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'carte' 'txt'; gap: 44px; }
+    .moi__carte { width: min(74vw, 300px); }
+    .moi__txt { padding-top: 0; }
+    .moi__cordon { --ruban: 17px; }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const souris = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const borne = (v: number, a: number, b: number) => Math.min(Math.max(v, a), b);
+
+  function initPresentation(section: HTMLElement) {
+    const carte = section.querySelector<HTMLElement>('[data-moi-carte]'), badge = section.querySelector<HTMLElement>('[data-moi-badge]');
+    const balance = section.querySelector<HTMLElement>('[data-moi-balance]');
+    const sangles = [...section.querySelectorAll<SVGPathElement>('[data-moi-sangle]')];
+    if (!carte || !badge || !balance || !sangles.length) return;
+
+    /* La sangle part de l'attache (en haut, au milieu du badge), fait une grande boucle lâche vers le haut et la gauche,
+       comme posée sur la table, puis revient à l'attache. Elle est retracée quand la mise en page change. */
+    let trace = '';
+    const tracer = () => {
+      const W = section.clientWidth;
+      // Place de l'attache dans la section, sans tenir compte des transformations (le badge qui penche ne la déplace pas).
+      let x = carte.offsetWidth / 2, y = 4, el: HTMLElement | null = carte;
+      while (el && el !== section) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent as HTMLElement | null; }
+      const k = borne(W / 1300, 0.6, 1), p = (dx: number, dy: number) => `${(x + dx * k).toFixed(1)} ${(y + dy * k).toFixed(1)}`;
+      const d = `M ${p(0, 0)} C ${p(96, -200)}, ${p(-20, -430)}, ${p(-290, -392)} S ${p(-660, -150)}, ${p(-450, -78)} S ${p(-58, -128)}, ${p(0, 0)}`;
+      if (d === trace) return;
+      trace = d;
+      sangles.forEach((s) => s.setAttribute('d', d));
+    };
+    tracer();
+    document.fonts.ready.then(tracer);
+    if ('ResizeObserver' in window) new ResizeObserver(tracer).observe(section);
+
+    if (calme) return;
+    // À l'arrivée, le badge se balance une fois au bout de son cordon, puis s'immobilise.
+    gsap.fromTo(balance, { rotate: 7 }, { rotate: -2.6, duration: 2.4, ease: 'elastic.out(1, 0.3)', scrollTrigger: { trigger: carte, start: 'top 80%', once: true, refreshPriority: -1 } });
+    // À la souris, il s'incline légèrement, comme une carte qu'on tient en main.
+    if (souris) {
+      carte.addEventListener('pointermove', (e) => {
+        const r = carte.getBoundingClientRect(), u = (e.clientX - r.left) / r.width, v = (e.clientY - r.top) / r.height;
+        badge.classList.add('est-vise');
+        badge.style.setProperty('--ry', `${((u - 0.5) * 9).toFixed(2)}deg`);
+        badge.style.setProperty('--rx', `${((0.5 - v) * 6).toFixed(2)}deg`);
+      });
+      carte.addEventListener('pointerleave', () => {
+        badge.classList.remove('est-vise');
+        badge.style.setProperty('--rx', '0deg');
+        badge.style.setProperty('--ry', '0deg');
+      });
+    }
+  }
+
+  document.fonts.ready.then(() =>
+    requestAnimationFrame(() => {
+      document.querySelectorAll<HTMLElement>('[data-moi]').forEach(initPresentation);
+      if (!calme) ScrollTrigger.refresh();
+    }),
+  );
+</script>

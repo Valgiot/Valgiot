@@ -1,0 +1,100 @@
+---
+// Atelier : chaque élément du design, isolé, pour le juger et le retoucher.
+import { Image } from 'astro:assets';
+import V2 from '../../layouts/V2.astro';
+import Bouton from '../../components/v2/Bouton.astro';
+import Compteur from '../../components/v2/Compteur.astro';
+import Volets from '../../components/v2/Volets.astro';
+import { projets } from '../../lib/v2';
+
+const exemple = projets.find((p) => p.id.includes('padel')) ?? projets[0];
+---
+
+<V2 scene="papier" titre="Atelier — V.A.L.G">
+  <main class="page scene-papier" data-page="atelier">
+    <header class="entete">
+      <span class="t-ital" style="font-size:clamp(1.2rem,2.4vw,2rem);line-height:1">(Les éléments, un par un)</span>
+      <h1 class="entete__titre t-titre" data-entree>Atelier</h1>
+      <div class="entete__ligne">
+        <span class="t-mono">Bouge la souris partout : le curseur cadre ce qu'il survole.</span>
+      </div>
+    </header>
+
+    <section class="corps atelier">
+      <div class="atelier__piece">
+        <span class="t-mono">Boutons</span>
+        <div class="rangee">
+          <Bouton texte="Réserver une date" href="#" plein />
+          <Bouton texte="Voir le projet" href="#" />
+          <Bouton texte="Sans flèche" fleche={false} />
+        </div>
+        <p class="texte-doux">Le bouton suit la souris. L'encre part de l'endroit où tu entres et se retire par où tu sors. Le texte roule, la flèche traverse.</p>
+      </div>
+
+      <div class="atelier__piece">
+        <span class="t-mono">Liens</span>
+        <div class="rangee" style="gap:28px">
+          <a class="lien" href="#">Détails <span aria-hidden="true">→</span></a>
+          <a class="lien t-titre" href="#" style="font-size:clamp(1.4rem,3vw,2.4rem)">Collection</a>
+        </div>
+        <p class="texte-doux">Le trait se retire du côté opposé à la souris.</p>
+      </div>
+
+      <div class="atelier__piece">
+        <span class="t-mono">Compteur à rouleaux</span>
+        <div class="rangee" style="gap:22px">
+          <span style="font-size:clamp(3rem,8vw,6rem)"><Compteur valeur={3} total={41} id="cpt-demo" data-max="41" /></span>
+          <span class="rangee" style="gap:8px">
+            <Bouton texte="−" fleche={false} data-cpt-cible="#cpt-demo" data-cpt-pas="-1" aria-label="Moins un" />
+            <Bouton texte="+" fleche={false} data-cpt-cible="#cpt-demo" data-cpt-pas="1" aria-label="Plus un" />
+            <Bouton texte="+ 7" fleche={false} data-cpt-cible="#cpt-demo" data-cpt-pas="7" />
+          </span>
+        </div>
+        <p class="texte-doux">Chaque chiffre défile comme sur un tableau d'affichage. Il accompagne l'anneau, les projets et la visionneuse.</p>
+      </div>
+
+      <div class="atelier__piece">
+        <span class="t-mono">Cadre et légende</span>
+        <div style="max-width:320px">
+          <span class="cadre" data-cadre data-legende={`${exemple.titre} · 02 / ${exemple.photos.length}`}>
+            <Image src={exemple.couverture} alt={exemple.titre} widths={[320, 640]} sizes="320px" quality={80} />
+          </span>
+          <div class="legende">
+            <strong>{exemple.titre}</strong>
+            <em>Caen</em>
+            <span>02 / {exemple.photos.length}</span>
+          </div>
+        </div>
+        <p class="texte-doux">Survole la photo : les quatre coins du curseur viennent l'encadrer, comme un viseur qui fait la mise au point.</p>
+      </div>
+
+      <div class="atelier__piece atelier__piece--large">
+        <span class="t-mono">Catégories</span>
+        <Volets />
+        <p class="texte-doux">Les panneaux sont en noir et blanc. La couleur revient autour du curseur, et le panneau s'ouvre. Sur la page Collections, chacun mène à sa collection.</p>
+      </div>
+    </section>
+  </main>
+</V2>
+
+<style>
+  .atelier {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 14px;
+  }
+  .atelier__piece {
+    display: grid;
+    gap: 22px;
+    align-content: start;
+    padding: 22px;
+    border: 1px solid var(--trait);
+    border-radius: 6px;
+  }
+  .atelier__piece--large {
+    grid-column: 1 / -1;
+  }
+  .atelier__piece > .t-mono {
+    color: var(--doux);
+  }
+</style>

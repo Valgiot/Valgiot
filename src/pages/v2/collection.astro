@@ -1,0 +1,51 @@
+---
+// Collections : la porte d'entrée de tout le travail.
+// En haut, un volet par collection (Sport, Événements…) : en noir et blanc, la couleur revient autour du curseur.
+// Un clic sur un volet mène à la page de cette collection, où l'on choisit un projet.
+// En dessous, le mur calme : toutes les photos à la suite, sans effet.
+import V2 from '../../layouts/V2.astro';
+import Pied from '../../components/v2/Pied.astro';
+import Mur from '../../components/v2/Mur.astro';
+import Vue from '../../components/v2/Vue.astro';
+import Volets from '../../components/v2/Volets.astro';
+import Reperes from '../../components/v2/Reperes.astro';
+import Compteur from '../../components/v2/Compteur.astro';
+import { projets, univers, totalPhotos, deuxChiffres } from '../../lib/v2';
+
+const photos = projets.flatMap((p) =>
+  p.photos.map((photo, k) => ({
+    photo,
+    cat: p.catSlug,
+    projet: p.id,
+    rang: k + 1,
+    legende: `${p.titre} · ${deuxChiffres(k + 1)} / ${p.photos.length}`,
+  })),
+);
+---
+
+<V2 scene="papier" titre="Collections — V.A.L.G">
+  <main class="page scene-papier" data-page="collection" id="haut">
+    <header class="entete">
+      <a class="lien t-mono" href="/v2/">← Accueil</a>
+      <h1 class="entete__titre t-titre" data-entree style="--lettres:11">Collections</h1>
+      <div class="entete__ligne">
+        <span class="t-mono">{univers.length} collections, {projets.length} projets</span>
+        <span style="display:inline-flex;align-items:baseline;gap:10px;color:var(--txt);font-size:clamp(1.6rem,3vw,2.6rem)">
+          <Compteur valeur={totalPhotos} chiffres={3} />
+          <span class="t-ital" style="font-size:.6em;color:var(--doux)">photos</span>
+        </span>
+      </div>
+    </header>
+    <section class="corps" aria-label="Les collections">
+      <Volets />
+    </section>
+    <section class="collection-mur" data-mur-zone aria-label="Toutes les photos">
+      <Mur photos={photos} />
+    </section>
+
+    <Reperes cat="Collections" titre="Tout" total={totalPhotos} haut="Collections" />
+
+    <Pied />
+  </main>
+  <Vue />
+</V2>

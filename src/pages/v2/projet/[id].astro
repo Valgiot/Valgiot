@@ -1,0 +1,105 @@
+---
+// Page d'un projet, sur fond noir, avec deux façons de regarder les mêmes photos :
+// 1. le défilé — une photo de face au centre, ses voisines tournées vers elle, on avance en défilant (façon perappelgren.de) ;
+// 2. le mur — toutes les photos posées côte à côte, sans effet, pour admirer au calme.
+// Le titre, le compteur et le choix de vue ne bougent pas d'une vue à l'autre : seules les photos changent de place, en volant.
+import { Image } from 'astro:assets';
+import V2 from '../../../layouts/V2.astro';
+import Pied from '../../../components/v2/Pied.astro';
+import Mur from '../../../components/v2/Mur.astro';
+import Vue from '../../../components/v2/Vue.astro';
+import Compteur from '../../../components/v2/Compteur.astro';
+import { projets, univers, deuxChiffres, type Projet } from '../../../lib/v2';
+
+export function getStaticPaths() {
+  return projets.map((projet, i) => ({
+    params: { id: projet.id },
+    props: { projet, suivant: projets[(i + 1) % projets.length] },
+  }));
+}
+
+interface Props {
+  projet: Projet;
+  suivant: Projet;
+}
+const { projet, suivant } = Astro.props;
+const nb = projet.photos.length;
+const chiffres = Math.max(2, String(nb).length);
+const photos = projet.photos.map((photo, k) => ({
+  photo,
+  cat: projet.catSlug,
+  legende: `${projet.titre} · ${deuxChiffres(k + 1)} / ${nb}`,
+}));
+// Le lien de retour ramène à la collection du projet (ou à la liste des collections quand le projet est seul dans la sienne).
+const collection = univers.find((u) => u.slug === projet.catSlug);
+const retour = collection && collection.projets.length > 1 ? { href: `/v2/collection/${collection.slug}/`, nom: collection.titre } : { href: '/v2/collection/', nom: 'Collections' };
+const choix = [
+  { vue: 'defile', nom: 'Défilé' },
+  { vue: 'mur', nom: 'Mur' },
+];
+---
+
+<V2 scene="nuit" titre={`${projet.titre} — V.A.L.G`}>
+  <main class="page scene-nuit" data-page="projet" data-vue="defile">
+    <!-- Vue 1 : le défilé -->
+    <section class="defile" data-defile aria-label={`Photos — ${projet.titre}`}>
+      <div class="defile__scene" data-scene>
+        {
+          photos.map(({ photo, legende }, k) => {
+            const ar = photo.image.width / photo.image.height;
+            return (
+              <button
+                type="button"
+                class="defile__photo"
+                data-photo
+                data-cadre
+                data-ar={ar.toFixed(3)}
+                data-legende={legende}
+                aria-label={`Photo ${k + 1} sur ${nb}`}
+                style={`--ar:${ar.toFixed(3)}`}
+              >
+                <Image
+                  src={photo.image}
+                  alt={photo.alt ? `${photo.alt} — ${legende}` : legende}
+                  widths={[560, 840, 1400]}
+                  sizes={ar > 1 ? '(max-width: 720px) 92vw, 62vw' : '(max-width: 720px) 92vw, 42vw'}
+                  quality={78}
+                  loading={k < 3 ? 'eager' : 'lazy'}
+                  draggable="false"
+                />
+              </button>
+            );
+          })
+        }
+      </div>
+    </section>
+
+    <!-- Vue 2 : le mur -->
+    <section class="projet-mur" aria-label={`Toutes les photos — ${projet.titre}`}>
+      <Mur photos={photos} />
+    </section>
+
+    <!-- Repères communs aux deux vues, toujours au même endroit -->
+    <div class="hud" data-hud>
+      <div class="hud__nom">
+        <a class="lien t-mono" href={retour.href}>← {retour.nom}</a>
+        <h1 class="hud__titre t-titre">{projet.titre}</h1>
+      </div>
+      <div class="hud__rang">
+        <Compteur valeur={1} total={nb} chiffres={chiffres} data-rang />
+      </div>
+      <div class="hud__cote">
+        <div class="vues" role="group" aria-label="Affichage des photos">
+          {choix.map((c) => <button type="button" class="vues__btn" data-vue-choix={c.vue} aria-pressed={c.vue === 'defile' ? 'true' : 'false'}>{c.nom}</button>)}
+        </div>
+      </div>
+    </div>
+
+    <a class="suite" href={`/v2/projet/${suivant.id}/`}>
+      <span class="t-mono" style="color:var(--doux)">Projet suivant · ({suivant.categorie})</span>
+      <strong class="t-titre">{suivant.titre}</strong>
+    </a>
+    <Pied />
+  </main>
+  <Vue />
+</V2>

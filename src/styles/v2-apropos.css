@@ -1,0 +1,215 @@
+/* À propos — un récit au défilement.
+   Règle de construction : sans animation (ou sans script), tout ce qui suit donne une page simple, lisible de haut en bas.
+   Les scènes épinglées (terrain, instant, lumière) ne s'activent que sous « html.ap-anime », posé par la page
+   quand le visiteur accepte les animations. Les scènes sont épinglées en CSS (position: sticky) : le script ne fait
+   que lire l'avancement du défilement. */
+
+.ap-chap { display: block; color: var(--doux); }
+.ap .scene-nuit { background: var(--fond); color: var(--txt); }
+.ap a[data-vers-projet] { display: block; text-decoration: none; }
+
+/* ───────── Ouverture ───────── */
+.ap-ouv { position: relative; min-height: 88svh; display: grid; grid-template-rows: 1fr auto; padding: 104px var(--marge) clamp(26px, 5vh, 54px); }
+.ap-ouv__haut { display: flex; justify-content: space-between; align-items: start; gap: 16px; color: var(--doux); }
+.ap-ouv__bloc { display: grid; gap: clamp(16px, 2.4vw, 30px); }
+.ap-ouv__titre { font-size: clamp(1.7rem, 7.4vw, 9rem); line-height: 0.9; }
+.ap-ouv__titre .t-ital { font-size: 1.14em; line-height: 0.82; }
+.ap-ouv__sous { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 24px; padding-top: 14px; border-top: 1px solid var(--trait); }
+.ap-ouv__sous .t-ital { font-size: clamp(1.15rem, 2.1vw, 1.9rem); line-height: 1.1; }
+.ap-ouv__sous .t-mono { color: var(--doux); }
+
+/* ───────── 1. Le terrain ───────── */
+.ap-terrain__fixe { position: relative; display: grid; gap: 24px; padding: clamp(40px, 8vw, 90px) var(--marge); }
+.ap-terrain__photo img { width: 100%; height: auto; max-height: 86svh; object-fit: cover; }
+.ap-terrain__txt { display: grid; gap: clamp(12px, 1.6vw, 22px); }
+.ap-terrain__titre { font-size: clamp(1.9rem, 5.6vw, 6.6rem); }
+.ap-terrain__titre .t-ital { font-size: 1.12em; }
+.ap-terrain__txt--clair { display: none; }
+html.ap-anime .ap-terrain__txt--clair { display: grid; }
+.ap-terrain__suite { max-width: 27ch; font-family: var(--ital); font-style: italic; font-size: clamp(1.25rem, 2.2vw, 2rem); line-height: 1.14; }
+
+/* --o : ouverture de la fenêtre (0 = petite, 1 = plein écran). --s : arrivée de la suite du texte. Réglés par le script.
+   --t0 --r0 --b0 --l0 : les marges de la petite fenêtre au départ. */
+html.ap-anime .ap-terrain { height: 300svh; margin-top: -20svh; }
+html.ap-anime .ap-terrain__fixe { --o: 0; --s: 0; --t0: 22svh; --b0: 20svh; --l0: 60vw; --r0: 11vw; position: sticky; top: 0; display: block; height: 100svh; min-height: 420px; padding: 0; overflow: hidden; }
+html.ap-anime .ap-terrain__photo { position: absolute; z-index: 1; inset: 0; clip-path: inset(calc(var(--t0) * (1 - var(--o))) calc(var(--r0) * (1 - var(--o))) calc(var(--b0) * (1 - var(--o))) calc(var(--l0) * (1 - var(--o)))); will-change: clip-path; }
+html.ap-anime .ap-terrain__photo img { width: 100%; height: 100%; max-height: none; object-fit: cover; object-position: 50% 56%; scale: calc(1.26 - 0.26 * var(--o)); }
+/* Un voile uni (pas de dégradé) assombrit un peu la photo pour que le texte clair reste lisible. */
+html.ap-anime .ap-terrain__photo::after { content: ''; position: absolute; inset: 0; background: var(--noir); opacity: calc(var(--o) * 0.22 + var(--s) * 0.3); }
+/* Le texte existe deux fois, au même endroit : sombre sous la photo, clair dans la fenêtre. La découpe de la fenêtre fait
+   passer de l'un à l'autre, lettre par lettre, sans mélange de couleurs. */
+html.ap-anime .ap-terrain__txt { position: absolute; z-index: 0; left: var(--marge); top: 50%; translate: 0 -50%; pointer-events: none; }
+html.ap-anime .ap-terrain__txt--clair { z-index: 2; color: #efede6; }
+html.ap-anime .ap-terrain__txt--clair .ap-chap { color: inherit; opacity: 0.7; }
+html.ap-anime .ap-terrain__suite { position: absolute; z-index: 2; left: var(--marge); bottom: clamp(28px, 8vh, 84px); color: #efede6; opacity: var(--s); translate: 0 calc((1 - var(--s)) * 26px); }
+@media (max-width: 720px) {
+  html.ap-anime .ap-terrain { margin-top: 0; }
+  html.ap-anime .ap-terrain__fixe { --t0: 46svh; --b0: 12svh; --l0: 22vw; --r0: 22vw; }
+  html.ap-anime .ap-terrain__txt { top: 104px; translate: none; }
+  html.ap-anime .ap-terrain__suite { bottom: 6svh; right: var(--marge); }
+}
+
+/* ───────── 2. L'instant ───────── */
+.ap-instant__fixe { position: relative; display: grid; gap: 22px; padding: clamp(48px, 9vw, 110px) var(--marge); background: var(--fond); color: var(--txt); }
+.ap-instant__cadre { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.ap-instant__vue img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.ap-lame, .ap-instant__papier, .ap-instant__cote { display: none; }
+.ap-instant__mots { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1em 0.6em; font-size: clamp(1.4rem, 3.6vw, 3rem); font-weight: 400; line-height: 1; }
+.ap-instant__mot i { font-size: 1.1em; }
+.ap-instant__mot b { display: inline-block; }
+.ap-instant__chute { font-family: var(--ital); font-style: italic; font-size: clamp(1.5rem, 3.8vw, 3.6rem); line-height: 1.08; }
+@media (max-width: 720px) { .ap-instant__cadre { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+html.ap-anime .ap-instant { height: 540svh; }
+html.ap-anime .ap-instant__fixe { position: sticky; top: 0; display: block; height: 100svh; min-height: 420px; padding: 0; overflow: hidden; }
+html.ap-anime .ap-instant__chap { position: absolute; z-index: 3; left: var(--marge); top: 98px; }
+html.ap-anime .ap-instant__cote { position: absolute; z-index: 3; right: var(--marge); top: 94px; display: grid; justify-items: end; gap: 8px; font-size: clamp(1.6rem, 3.2vw, 2.8rem); transition: opacity 0.4s; }
+html.ap-anime .ap-instant__cote .t-mono { color: var(--doux); }
+html.ap-anime .ap-instant__cadre { position: absolute; left: 50%; top: 50%; display: block; height: min(66svh, 78vw * 1.25); aspect-ratio: 4 / 5; translate: -50% -50%; overflow: hidden; background: var(--noir); border-radius: 2px; }
+html.ap-anime .ap-instant__vue { position: absolute; inset: 0; visibility: hidden; }
+html.ap-anime .ap-instant__vue.est-la { visibility: visible; }
+html.ap-anime .ap-instant__vue img { height: 100%; aspect-ratio: auto; }
+/* Les deux lames de l'obturateur : elles se ferment, l'image change dans le noir, elles se rouvrent. */
+html.ap-anime .ap-lame { display: block; position: absolute; z-index: 2; left: 0; right: 0; height: 50.5%; background: var(--noir); transform: scaleY(0); pointer-events: none; }
+.ap-lame--haut { top: 0; transform-origin: 50% 0; }
+.ap-lame--bas { bottom: 0; transform-origin: 50% 100%; }
+/* Le mot de chaque image, en très grand, par-dessus le cadre. */
+html.ap-anime .ap-instant__mots { position: absolute; z-index: 3; left: var(--marge); bottom: clamp(56px, 12svh, 120px); display: grid; gap: 0; font-size: 1rem; pointer-events: none; transition: opacity 0.3s; }
+html.ap-anime .ap-instant__mot { grid-area: 1 / 1; display: grid; justify-items: start; visibility: hidden; }
+html.ap-anime .ap-instant__mot.est-la { visibility: visible; }
+html.ap-anime .ap-instant__mot i { font-size: clamp(1.5rem, 3.2vw, 3rem); line-height: 0.9; padding-left: 0.08em; }
+html.ap-anime .ap-instant__mot b { display: block; overflow: hidden; padding-top: 0.17em; font-size: clamp(2.7rem, 12vw, 12.5rem); line-height: 0.84; }
+html.ap-anime .ap-instant__mot b span { display: block; }
+html.ap-anime .ap-instant__chute { position: absolute; z-index: 4; inset: 0; display: grid; place-content: center; padding: 0 var(--marge); text-align: center; opacity: 0; pointer-events: none; }
+/* Le papier revient par le centre et recouvre la nuit : la section suivante est déjà là quand on repart. */
+html.ap-anime .ap-instant__papier { display: block; position: absolute; z-index: 5; inset: 0; background: var(--papier); clip-path: circle(var(--rayon, 0px) at 50% 50%); pointer-events: none; }
+html.ap-anime .ap-instant__fixe.est-eteint .ap-instant__cadre { opacity: 0; }
+html.ap-anime .ap-instant__fixe.est-ferme .ap-instant__mots, html.ap-anime .ap-instant__fixe.est-ferme .ap-instant__cote { opacity: 0; }
+@media (max-width: 720px) {
+  html.ap-anime .ap-instant__cadre { top: 46%; height: min(54svh, 76vw * 1.25); }
+  html.ap-anime .ap-instant__mots { bottom: 7svh; }
+}
+
+/* ───────── 3. Le silence ───────── */
+.ap-silence { position: relative; display: grid; justify-items: center; gap: clamp(18px, 2.4vw, 32px); padding: clamp(150px, 25vw, 360px) var(--marge) clamp(120px, 17vw, 250px); overflow: clip; }
+.ap-silence__txt { max-width: 17ch; margin: 0; text-align: center; font-family: var(--ital); font-style: italic; font-weight: 400; font-size: clamp(1.8rem, 4.2vw, 4.2rem); line-height: 1.05; letter-spacing: -0.01em; }
+.ap-silence__txt--2 { max-width: 22ch; font-size: clamp(1.25rem, 2.2vw, 2.1rem); line-height: 1.18; color: var(--doux); }
+.ap-silence__photos { display: contents; }
+.ap-silence__photo { position: absolute; width: clamp(110px, 15vw, 240px); }
+.ap-silence__photo img { width: 100%; height: auto; border-radius: 2px; }
+.ap-silence__photo:nth-child(1) { left: 5%; top: 13%; rotate: -4deg; }
+.ap-silence__photo:nth-child(2) { right: 7%; top: 36%; rotate: 3deg; width: clamp(96px, 12vw, 190px); }
+.ap-silence__photo:nth-child(3) { left: 12%; bottom: 9%; rotate: 2deg; width: clamp(84px, 9.5vw, 150px); }
+@media (max-width: 900px) {
+  .ap-silence { padding-block: clamp(110px, 24vw, 200px); }
+  .ap-silence__photos { display: grid; grid-template-columns: 1.3fr 1fr 0.8fr; align-items: center; gap: 14px; width: 100%; max-width: 520px; margin-top: 34px; }
+  .ap-silence__photo, .ap-silence__photo:nth-child(n) { position: static; width: auto; }
+}
+
+/* ───────── 4. La lumière ───────── */
+.ap-lumiere__fixe { position: relative; display: grid; gap: 24px; padding: 0 0 clamp(48px, 9vw, 110px); background: var(--fond); color: var(--txt); }
+.ap-lumiere__papier { display: grid; place-items: center; padding: clamp(70px, 12vw, 160px) var(--marge); background: var(--papier); color: var(--encre); }
+.ap-lumiere__papier p { max-width: 14ch; text-align: center; font-family: var(--ital); font-style: italic; font-size: clamp(1.8rem, 4.6vw, 4.6rem); line-height: 1.04; }
+.ap-lumiere__txt { display: grid; gap: clamp(12px, 1.6vw, 22px); padding: 0 var(--marge); }
+.ap-lumiere__titre { font-size: clamp(2.3rem, 6.6vw, 8rem); line-height: 0.9; }
+.ap-lumiere__titre .t-ital { display: block; font-size: 1.16em; line-height: 0.86; }
+.ap-lumiere__sources { display: grid; font-family: var(--ital); font-style: italic; font-size: clamp(1.3rem, 2.5vw, 2.3rem); line-height: 1.12; }
+.ap-lumiere__cadre { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0 var(--marge); }
+.ap-lumiere__vue img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+
+html.ap-anime .ap-lumiere { height: 460svh; }
+html.ap-anime .ap-lumiere__fixe { position: sticky; top: 0; display: block; height: 100svh; min-height: 420px; padding: 0; overflow: hidden; }
+/* --rayon est réglé par le script : le papier se referme sur le point d'où viendra la lumière (--cx, --cy). */
+html.ap-anime .ap-lumiere__papier { position: absolute; z-index: 4; inset: 0; padding: 0 var(--marge); clip-path: circle(var(--rayon, 150vmax) at var(--cx, 70%) var(--cy, 30%)); }
+html.ap-anime .ap-lumiere__txt { position: absolute; z-index: 2; left: var(--marge); top: 50%; translate: 0 -50%; max-width: 44vw; padding: 0; opacity: 0; }
+html.ap-anime .ap-lumiere__sources span { grid-area: 1 / 1; opacity: 0; translate: 0 10px; transition: opacity 0.45s, translate 0.6s var(--doux-out); }
+html.ap-anime .ap-lumiere__sources span.est-la { opacity: 1; translate: none; }
+html.ap-anime .ap-lumiere__cadre { position: absolute; z-index: 1; right: max(var(--marge), 8vw); top: 50%; display: block; height: min(76svh, 44vw * 1.25); aspect-ratio: 4 / 5; padding: 0; translate: 0 -50%; }
+/* Chaque photo s'ouvre en cercle depuis sa source de lumière (--ox, --oy). */
+html.ap-anime .ap-lumiere__vue { position: absolute; inset: 0; clip-path: circle(var(--rayon, 0px) at var(--ox, 50%) var(--oy, 50%)); will-change: clip-path; }
+html.ap-anime .ap-lumiere__vue img { height: 100%; aspect-ratio: auto; border-radius: 2px; }
+@media (max-width: 720px) {
+  html.ap-anime .ap-lumiere__cadre { right: auto; left: 50%; top: 92px; height: min(52svh, 78vw * 1.25); translate: -50% 0; }
+  html.ap-anime .ap-lumiere__txt { top: auto; bottom: 6svh; max-width: none; translate: none; }
+}
+
+/* ───────── 5. Le bruit ───────── */
+.ap-son { display: grid; gap: clamp(26px, 4vw, 60px); padding: clamp(110px, 16vw, 240px) var(--marge) clamp(110px, 17vw, 250px); overflow: clip; }
+.ap-son__titre { font-size: clamp(1.9rem, 8.6vw, 10.2rem); line-height: 0.88; }
+.ap-son__titre .t-ital { font-size: 0.62em; line-height: 1; }
+/* Chaque lettre a sa propre largeur (--wdth), que le script fait onduler : plus on défile vite, plus ça vibre. */
+.ap-egal { white-space: nowrap; }
+.ap-egal i { display: inline-block; font-style: normal; font-variation-settings: 'wdth' var(--wdth, 125); }
+.ap-son__trio { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 4.2fr) minmax(0, 2.8fr); align-items: start; gap: clamp(12px, 2vw, 30px); margin-top: clamp(10px, 3vw, 50px); }
+.ap-son__photo { overflow: hidden; border-radius: 2px; }
+.ap-son__photo img { width: 100%; height: auto; }
+.ap-son__milieu { display: grid; gap: clamp(22px, 3.4vw, 54px); padding-top: clamp(40px, 9vw, 150px); }
+.ap-son__photo--3 { margin-top: clamp(20px, 4vw, 70px); }
+.ap-son__texte { max-width: 24ch; font-family: var(--ital); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 2.3rem); line-height: 1.12; }
+@media (max-width: 720px) {
+  .ap-son__trio { grid-template-columns: minmax(0, 1fr); }
+  .ap-son__milieu { padding-top: 0; }
+  .ap-son__photo--3 { width: 60%; justify-self: end; margin-top: 0; }
+}
+
+/* ───────── 6. Ailleurs ───────── */
+.ap-ailleurs { display: grid; gap: clamp(50px, 8vw, 120px); padding: clamp(110px, 16vw, 230px) var(--marge) clamp(90px, 14vw, 210px); overflow: clip; }
+.ap-ailleurs__tete { display: grid; gap: clamp(16px, 2.2vw, 30px); }
+.ap-ailleurs__titre { max-width: 15em; font-size: clamp(1.7rem, 5.2vw, 6rem); line-height: 0.94; }
+.ap-ailleurs__titre .t-ital { font-size: 1.14em; }
+.ap-ailleurs__texte { max-width: 30ch; justify-self: end; font-family: var(--ital); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 2.3rem); line-height: 1.12; }
+.ap-ailleurs__tirages { display: grid; grid-template-columns: 1.15fr 0.9fr 1.25fr 0.8fr; align-items: start; gap: clamp(12px, 2.4vw, 40px); }
+.ap-tirage { display: grid; gap: 10px; }
+.ap-tirage:nth-child(2) { margin-top: clamp(30px, 9vw, 150px); }
+.ap-tirage:nth-child(3) { margin-top: clamp(10px, 3vw, 50px); }
+.ap-tirage:nth-child(4) { margin-top: clamp(50px, 14vw, 230px); }
+.ap-tirage__img { display: block; overflow: hidden; border-radius: 2px; }
+.ap-tirage__img img { width: 100%; height: auto; transition: scale 0.9s var(--doux-out); }
+.ap-tirage:hover .ap-tirage__img img { scale: 1.04; }
+.ap-tirage__nom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 10px; color: var(--doux); }
+.ap-tirage__nom span:first-child { color: var(--txt); }
+@media (max-width: 720px) {
+  .ap-ailleurs__tirages { grid-template-columns: 1fr 1fr; }
+  .ap-tirage:nth-child(n) { margin-top: 0; }
+  .ap-tirage:nth-child(even) { margin-top: 44px; }
+}
+
+/* ───────── 7. Moi ───────── */
+.ap-moi { display: grid; grid-template-columns: minmax(0, 4.4fr) minmax(0, 6fr); align-items: center; gap: clamp(28px, 6vw, 110px); padding: clamp(70px, 10vw, 150px) var(--marge) clamp(90px, 13vw, 190px); border-top: 1px solid var(--trait); }
+/* L'emplacement du portrait : un cadre de viseur vide, qui dit clairement qu'une photo viendra ici. */
+.ap-moi__portrait { position: relative; aspect-ratio: 4 / 5; width: 100%; max-width: 520px; background: var(--voile); color: var(--doux); }
+.ap-moi__portrait--photo { overflow: hidden; border-radius: 2px; box-shadow: 0 34px 70px -30px rgb(0 0 0 / 0.42); }
+.ap-moi__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.ap-moi__portrait i { position: absolute; width: 22px; height: 22px; border: 1.5px solid var(--txt); animation: ap-mise-au-point 2.6s ease-in-out infinite alternate; }
+.ap-moi__portrait i:nth-child(1) { left: 14px; top: 14px; border-right: 0; border-bottom: 0; --dx: 1; --dy: 1; }
+.ap-moi__portrait i:nth-child(2) { right: 14px; top: 14px; border-left: 0; border-bottom: 0; --dx: -1; --dy: 1; }
+.ap-moi__portrait i:nth-child(3) { right: 14px; bottom: 14px; border-left: 0; border-top: 0; --dx: -1; --dy: -1; }
+.ap-moi__portrait i:nth-child(4) { left: 14px; bottom: 14px; border-right: 0; border-top: 0; --dx: 1; --dy: -1; }
+@keyframes ap-mise-au-point { from { translate: 0 0; } to { translate: calc(var(--dx) * 9px) calc(var(--dy) * 9px); } }
+.ap-moi__croix { position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; translate: -50% -50%; background: linear-gradient(var(--txt), var(--txt)) 50% 50% / 100% 1.5px no-repeat, linear-gradient(var(--txt), var(--txt)) 50% 50% / 1.5px 100% no-repeat; opacity: 0.55; }
+.ap-moi__note { position: absolute; left: 0; right: 0; bottom: 18%; display: grid; justify-items: center; gap: 6px; text-align: center; }
+.ap-moi__note .t-ital { font-size: clamp(1.1rem, 1.8vw, 1.5rem); line-height: 1.1; color: var(--txt); }
+.ap-moi__txt { display: grid; gap: clamp(14px, 1.8vw, 24px); }
+.ap-moi__titre { font-size: clamp(1.9rem, 4.6vw, 5.4rem); line-height: 0.92; }
+.ap-moi__titre .t-ital { display: block; font-size: 1.3em; line-height: 0.9; }
+.ap-moi__texte { max-width: 46ch; font-size: clamp(1.02rem, 1.3vw, 1.2rem); }
+.ap-moi__texte--doux { color: var(--doux); }
+.ap-fiche { display: grid; margin: clamp(8px, 1.4vw, 18px) 0 0; max-width: 620px; }
+.ap-fiche div { display: grid; grid-template-columns: 9.5em minmax(0, 1fr); gap: 12px; padding: 10px 0; border-top: 1px solid var(--trait); }
+.ap-fiche dt { color: var(--doux); }
+.ap-fiche dd { margin: 0; }
+@media (max-width: 720px) {
+  .ap-moi { grid-template-columns: minmax(0, 1fr); }
+  .ap-moi__portrait { max-width: 340px; }
+  .ap-fiche div { grid-template-columns: 7.5em minmax(0, 1fr); }
+}
+
+/* ───────── Ouverture vers la suite ───────── */
+.ap-fin { display: grid; justify-items: start; gap: clamp(18px, 2.6vw, 34px); padding: clamp(90px, 14vw, 210px) var(--marge) clamp(50px, 8vw, 110px); border-top: 1px solid var(--trait); overflow: clip; }
+.ap-fin__mot { font-size: clamp(2rem, 8.6vw, 10.4rem); line-height: 0.88; max-width: 11em; }
+.ap-fin__mot .t-ital { font-size: 1.04em; line-height: 0.9; }
+.ap-fin__texte { max-width: 32ch; font-family: var(--ital); font-style: italic; font-size: clamp(1.3rem, 2.4vw, 2.2rem); line-height: 1.12; }
+
+/* ───────── Aperçu du bandeau de l'accueil (provisoire) ───────── */
+.ap-apercu { border-top: 1px dashed var(--trait); }
+.ap-apercu__note { padding: 16px var(--marge) 0; color: var(--doux); }

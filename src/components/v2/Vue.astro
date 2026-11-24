@@ -1,0 +1,22 @@
+---
+// Visionneuse sobre : la photo en grand sur fond noir, un compteur, deux flèches.
+// Depuis un mur de collection, elle propose aussi d'aller voir le projet d'où vient la photo.
+// Elle montre aussi les films (bouton « Plein écran » de l'accueil). Tant qu'elle est ouverte, la page derrière ne bouge plus.
+import Compteur from './Compteur.astro';
+---
+
+<div class="vue" hidden role="dialog" aria-modal="true" aria-label="En grand">
+  <button type="button" class="vue__btn vue__fermer" data-vue-fermer>Fermer</button>
+  <div class="vue__scene"><img alt="" draggable="false" /><video class="vue__video" hidden controls playsinline preload="metadata" controlslist="nodownload nofullscreen noremoteplayback" disablepictureinpicture></video></div>
+  <div class="vue__bas">
+    <Compteur valeur={1} total={1} chiffres={3} />
+    <span class="vue__infos">
+      <span class="t-mono" data-vue-legende style="opacity:.7"></span>
+      <a class="vue__btn vue__projet" data-vue-projet hidden>Voir le projet →</a>
+    </span>
+    <span class="rangee" style="gap:8px">
+      <button type="button" class="vue__btn" data-vue-prec aria-label="Précédent">←</button>
+      <button type="button" class="vue__btn" data-vue-suiv aria-label="Suivant">→</button>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,55 @@
+---
+// Gabarit de la refonte (v2). Les pages vivent sous /v2/ tant que le nouveau design n'est pas validé.
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource/instrument-serif/400.css';
+import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource-variable/instrument-sans';
+import '@fontsource-variable/geist-mono';
+import '../styles/v2.css';
+import Barre from '../components/v2/Barre.astro';
+
+interface Props {
+  titre?: string;
+  /** Phrase affichée par Google sous le titre de la page. */
+  description?: string;
+  /** « papier » pour naviguer, « nuit » pour regarder. */
+  scene?: 'papier' | 'nuit';
+}
+const { titre = 'V.A.L.G — Photo & vidéo, Caen', description, scene = 'papier' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr" data-scene={scene}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titre}</title>
+    {description && <meta name="description" content={description} />}
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      // Retour depuis un projet : la page papier renaît du noir (voir « explosion » dans site.ts).
+      try {
+        if (sessionStorage.getItem('valg-retour')) document.documentElement.classList.add('arrive-du-noir');
+        // Entrée dans une collection par son volet : la page s'ouvre sur ce même volet, en grand, puis il laisse place aux projets.
+        if (sessionStorage.getItem('valg-porte')) document.documentElement.classList.add('arrive-par-porte');
+      } catch (e) {}
+      // Les animations d'arrivée attendent que la page soit installée (le script retire cette classe) ; au plus 2,5 s, quoi qu'il arrive.
+      document.documentElement.classList.add('attend-page');
+      setTimeout(function () { document.documentElement.classList.remove('attend-page'); }, 2500);
+    </script>
+    <style is:global>
+      html.arrive-du-noir .page.scene-papier { clip-path: circle(0px at 50% 50%); }
+    </style>
+  </head>
+  <body>
+    <Barre />
+    <slot />
+    <div class="cadrage" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="cadrage__txt"></span></div>
+    <div class="vis" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
+    <span class="onde" aria-hidden="true"></span>
+    <script>
+      import '../scripts/v2/site.ts';
+    </script>
+  </body>
+</html>

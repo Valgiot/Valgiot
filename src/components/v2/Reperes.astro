@@ -1,0 +1,60 @@
+---
+// Repères fixes en bas de l'écran, pour les pages qui montrent un mur de photos (toutes les collections, une collection).
+// À gauche : où l'on est. À droite : le rang de la photo survolée et le bouton « Chercher », qui mène à n'importe quelle
+// collection ou n'importe quel projet sans remonter la page.
+import Compteur from './Compteur.astro';
+import { projets, univers, totalPhotos, adresseCollection } from '../../lib/v2';
+
+interface Props {
+  /** Petit mot entre parenthèses au-dessus du titre, par exemple « Collection ». */
+  cat: string;
+  titre: string;
+  total: number;
+  /** Texte du lien qui remonte en haut de la page. */
+  haut: string;
+}
+const { cat, titre, total, haut } = Astro.props;
+
+// Tout ce que « Chercher » peut proposer : d'abord les collections, puis chaque projet.
+const choix = [
+  { type: 'tout', nom: 'Toutes les photos', cat: '', nb: totalPhotos, href: '/v2/collection/' },
+  ...univers.map((u) => ({ type: 'collection', nom: u.titre, cat: '', nb: u.nb, href: adresseCollection(u) })),
+  ...projets
+    .filter((p) => p.id !== p.catSlug && (univers.find((u) => u.slug === p.catSlug)?.projets.length ?? 0) > 1)
+    .map((p) => ({ type: 'projet', nom: p.titre, cat: p.categorie, nb: p.photos.length, href: `/v2/projet/${p.id}/` })),
+];
+---
+
+<div class="hud est-loin" data-hud>
+  <div class="hud__nom">
+    <a class="lien t-mono" href="#haut" data-vers-haut>↑ {haut}</a>
+    <span class="hud__cat t-ital">({cat})</span>
+    <p class="hud__titre t-titre">{titre}</p>
+  </div>
+  <div class="hud__rang">
+    <Compteur valeur={1} total={total} chiffres={Math.max(2, String(total).length)} data-rang />
+  </div>
+  <div class="hud__cote">
+    <div class="goo" data-goo data-choix={JSON.stringify(choix)}>
+      <svg class="goo__filtre" aria-hidden="true" width="0" height="0">
+        <defs>
+          <filter id="valg-goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="flou"></feGaussianBlur>
+            <feColorMatrix in="flou" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -15" result="goo"></feColorMatrix>
+            <feComposite in="SourceGraphic" in2="goo" operator="atop"></feComposite>
+          </filter>
+        </defs>
+      </svg>
+      <div class="goo__corps">
+        <div class="goo__liste" role="listbox" aria-label="Collections et projets" data-goo-liste></div>
+        <div class="goo__pilule" data-goo-pilule>
+          <button type="button" class="goo__bouton" data-goo-ouvrir aria-expanded="false">Chercher</button>
+          <input class="goo__champ" type="text" placeholder="Sport, padel, ski…" aria-label="Chercher une collection ou un projet" autocomplete="off" spellcheck="false" hidden />
+        </div>
+        <span class="goo__bulle" data-goo-bulle aria-hidden="true">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"></path></svg>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+---
+// Page Contact de la refonte : la scène de contact (la même qu'à la fin de l'accueil, voir BandeauContact.astro),
+// puis, en petit, comment ça se passe.
+import V2 from '../../layouts/V2.astro';
+import BandeauContact from '../../components/v2/BandeauContact.astro';
+import Pied from '../../components/v2/Pied.astro';
+import { SITE } from '../../site';
+import { deuxChiffres } from '../../lib/v2';
+
+// « Photographe & vidéaste à Caen » en milieu de phrase : seule la première lettre perd sa majuscule.
+const metier = SITE.accroche.charAt(0).toLowerCase() + SITE.accroche.slice(1);
+
+// Textes de la démarche : à ajuster avec Valentin s'il travaille autrement.
+const etapes = [
+  { titre: 'Vous écrivez', texte: 'Un e-mail ou un message sur Instagram : le projet, la date, le lieu. Quelques lignes suffisent.' },
+  { titre: 'On en parle', texte: 'Je reviens vers vous pour comprendre ce que vous voulez montrer.' },
+  { titre: 'Le jour J', texte: `Photo, vidéo ou les deux : je viens sur place, à ${SITE.ville}, en ${SITE.region} ou plus loin.` },
+  { titre: 'Les images', texte: 'Je trie, je retouche, puis je vous envoie les images, prêtes à être utilisées.' },
+];
+---
+
+<V2
+  titre={`Contact — ${SITE.nom}, ${metier}`}
+  description={`Parlez de votre projet photo ou vidéo à ${SITE.nom}, ${metier} : sport, entreprises, portrait, événements, marques. ${SITE.zone}`}
+>
+  <main class="page scene-papier" data-page="contact">
+    <BandeauContact page />
+
+    <section class="ctd" id="demarche" aria-labelledby="ctd-titre">
+      <h2 class="ctd__titre t-mono" id="ctd-titre">Comment ça se passe</h2>
+      <ol class="ctd__etapes">
+        {
+          etapes.map((e, i) => (
+            <li class="ctd__etape" data-ctp-arrive style={`--k:${i}`}>
+              <span class="t-mono">{deuxChiffres(i + 1)}</span>
+              <h3 class="t-ital">{e.titre}</h3>
+              <p>{e.texte}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <Pied />
+  </main>
+</V2>
